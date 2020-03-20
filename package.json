@@ -1,6 +1,6 @@
 {
   "name": "rehype-meta",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "rehype plugin to add metadata to the head of a document",
   "license": "MIT",
   "keywords": [
