@@ -170,7 +170,7 @@ test('rehype-meta', function(t) {
       [
         '<head>',
         '<meta name="author" content="Jane X. Doe">',
-        '<meta name="copyright" content="© 2019 Jane X. Doe">',
+        '<meta name="copyright" content="© 2020 Jane X. Doe">',
         '</head>',
         ''
       ].join('\n'),
@@ -201,7 +201,7 @@ test('rehype-meta', function(t) {
       [
         '<head>',
         '<meta name="author" content="Jane X. Doe">',
-        '<meta name="copyright" content="© 2019 Jane X. Doe">',
+        '<meta name="copyright" content="© 2020 Jane X. Doe">',
         '</head>',
         ''
       ].join('\n'),
