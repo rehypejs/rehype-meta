@@ -180,25 +180,25 @@ function ogDescription(data, root) {
 }
 
 function ogImage(data, root) {
-  var value = data.og ? toImages(data.image).slice(0, 6) : []
+  var images = data.og ? toImages(data.image).slice(0, 6) : []
   var keys = ['url', 'alt', 'width', 'height']
 
-  value.forEach(add)
+  images.forEach(add)
 
-  function add(value) {
+  function add(image) {
     keys.forEach(each)
 
     function each(key) {
-      var val = value[key]
+      var value = image[key]
       var node
 
-      if (!val) {
+      if (!value) {
         return
       }
 
       node = h('meta', {
         property: 'og:image' + (key === 'url' ? '' : ':' + key),
-        content: val
+        content: value
       })
 
       append(data, root, node)
@@ -279,24 +279,24 @@ function twitterCard(data, root) {
 }
 
 function twitterImage(data, root) {
-  var value = data.twitter ? toImages(data.image)[0] : null
+  var image = data.twitter ? toImages(data.image)[0] : null
   var keys = ['url', 'alt']
 
-  if (value) {
+  if (image) {
     keys.forEach(each)
   }
 
   function each(key) {
-    var val = value[key]
+    var value = image[key]
     var node
 
-    if (!val) {
+    if (!value) {
       return
     }
 
     node = h('meta', {
       name: 'twitter:image' + (key === 'url' ? '' : ':' + key),
-      content: val
+      content: value
     })
 
     append(data, root, node)
