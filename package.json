@@ -35,7 +35,7 @@
   ],
   "dependencies": {
     "hast-util-from-selector": "^1.0.0",
-    "hast-util-select": "^3.0.0",
+    "hast-util-select": "^4.0.0",
     "hastscript": "^5.0.0"
   },
   "devDependencies": {
