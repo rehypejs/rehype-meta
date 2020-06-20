@@ -40,16 +40,16 @@
   },
   "devDependencies": {
     "nyc": "^15.0.0",
-    "prettier": "^1.0.0",
-    "rehype": "^9.0.0",
-    "rehype-document": "^3.0.0",
-    "remark-cli": "^7.0.0",
-    "remark-preset-wooorm": "^6.0.0",
-    "tape": "^4.0.0",
-    "xo": "^0.28.0"
+    "prettier": "^2.0.0",
+    "rehype": "^11.0.0",
+    "rehype-document": "^5.0.0",
+    "remark-cli": "^8.0.0",
+    "remark-preset-wooorm": "^7.0.0",
+    "tape": "^5.0.0",
+    "xo": "^0.32.0"
   },
   "scripts": {
-    "format": "remark . -qfo && prettier --write \"**/*.js\" && xo --fix",
+    "format": "remark . -qfo && prettier . --write && xo --fix",
     "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test.js",
     "test": "npm run format && npm run test-coverage"
@@ -70,7 +70,10 @@
   },
   "xo": {
     "prettier": true,
-    "esnext": false
+    "esnext": false,
+    "rules": {
+      "unicorn/no-fn-reference-in-iterator": "off"
+    }
   },
   "remarkConfig": {
     "plugins": [

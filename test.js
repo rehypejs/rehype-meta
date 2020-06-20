@@ -5,8 +5,8 @@ var rehype = require('rehype')
 var doc = require('rehype-document')
 var meta = require('.')
 
-test('rehype-meta', function(t) {
-  t.test('basics', function(st) {
+test('rehype-meta', function (t) {
+  t.test('basics', function (st) {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
@@ -18,10 +18,7 @@ test('rehype-meta', function(t) {
     )
 
     st.equal(
-      rehype()
-        .use(meta)
-        .processSync('')
-        .toString(),
+      rehype().use(meta).processSync('').toString(),
       '<html><head></head><body></body></html>',
       'should work in document mode'
     )
@@ -731,7 +728,7 @@ test('rehype-meta', function(t) {
     st.end()
   })
 
-  t.test('All together now', function(st) {
+  t.test('All together now', function (st) {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
