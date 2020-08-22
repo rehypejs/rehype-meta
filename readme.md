@@ -807,9 +807,9 @@ abide by its terms.
 
 [backers-badge]: https://opencollective.com/unified/backers/badge.svg
 
-[collective]: https://opencollective.com/unified
+[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
 
-[chat-badge]: https://img.shields.io/badge/chat-spectrum-7b16ff.svg
+[chat]: https://github.com/rehypejs/rehype/discussions
 
 [chat]: https://spectrum.chat/unified/rehype
 
