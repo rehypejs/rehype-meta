@@ -10,7 +10,7 @@
 
 [**rehype**][rehype] plugin to add metadata (Open Graph, Twitter) to your head.
 
-## Table of contents
+## Contents
 
 *   [Install](#install)
 *   [Use](#use)
@@ -807,11 +807,11 @@ abide by its terms.
 
 [backers-badge]: https://opencollective.com/unified/backers/badge.svg
 
+[collective]: https://opencollective.com/unified
+
 [chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
 
 [chat]: https://github.com/rehypejs/rehype/discussions
-
-[chat]: https://spectrum.chat/unified/rehype
 
 [npm]: https://docs.npmjs.com/cli/install
 
