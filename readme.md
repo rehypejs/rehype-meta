@@ -787,9 +787,9 @@ abide by its terms.
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/rehypejs/rehype-meta.svg
+[build-badge]: https://github.com/rehypejs/rehype-meta/workflows/main/badge.svg
 
-[build]: https://travis-ci.org/rehypejs/rehype-meta
+[build]: https://github.com/rehypejs/rehype-meta/actions
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/rehypejs/rehype-meta.svg
 
