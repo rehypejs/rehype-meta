@@ -91,7 +91,7 @@ function keywords(data, root) {
   var value = [].concat(data.tags || [], data.siteTags || []).filter(unique)
   var node
 
-  if (value.length !== 0) {
+  if (value.length > 0) {
     node = ensure(data, root, 'meta[name=keywords]')
     node.properties.content = value.join(', ')
   }
