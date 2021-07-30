@@ -15,7 +15,6 @@
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
-    *   [`rehype().use(meta[, options])`](#rehypeusemeta-options)
     *   [`Config`](#config)
 *   [Metadata](#metadata)
 *   [Security](#security)
@@ -24,6 +23,9 @@
 *   [License](#license)
 
 ## Install
+
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
+Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
 
 [npm][]:
 
@@ -36,13 +38,13 @@ npm install rehype-meta
 Say `example.js` looks as follows:
 
 ```js
-var report = require('vfile-reporter')
-var rehype = require('rehype')
-var meta = require('rehype-meta')
+import {reporter} from 'vfile-reporter'
+import {rehype} from 'rehype'
+import rehypeMeta from 'rehype-meta'
 
 rehype()
   .data('settings', {fragment: true})
-  .use(meta, {
+  .use(rehypeMeta, {
     twitter: true,
     og: true,
     copyright: true,
@@ -80,8 +82,7 @@ rehype()
       'NYC'
     ],
     image: {
-      url:
-        'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
+      url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
       alt: 'M.T.A. map designed in 1979',
       width: '1050',
       height: '550'
@@ -89,8 +90,9 @@ rehype()
     published: '2019-12-02T10:00:00.000Z',
     modified: '2019-12-03T19:13:00.000Z'
   })
-  .process('', function(err, file) {
-    console.error(report(err || file))
+  .process('')
+  .then((file) => {
+    console.error(reporter(file))
     console.log(String(file))
   })
 ```
@@ -135,7 +137,10 @@ no issues found
 
 ## API
 
-### `rehype().use(meta[, options])`
+This package exports no identifiers.
+The default export is `rehypeMeta`.
+
+### `unified().use(rehypeMeta[, options])`
 
 Add metadata to the head of a document.
 Adds a `<head>` if one doesn’t already exist.
@@ -833,7 +838,7 @@ abide by its terms.
 
 [config]: #config
 
-[use]: #rehypeusemeta-options
+[use]: #unifieduserehypemeta-options
 
 [timestamp]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date#Timestamp_string
 
