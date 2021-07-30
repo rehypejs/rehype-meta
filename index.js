@@ -4,9 +4,9 @@ import from from 'hast-util-from-selector'
 
 const $ = select.select
 
-var fbBase = 'https://www.facebook.com/'
+const fbBase = 'https://www.facebook.com/'
 
-var generators = [
+const generators = [
   title,
   canonical,
   description,
@@ -35,8 +35,8 @@ export default function meta(options) {
   return transform
 
   function transform(tree, file) {
-    var head = ensure({first: false}, tree, 'head', false)
-    var data = Object.assign(
+    const head = ensure({first: false}, tree, 'head', false)
+    const data = Object.assign(
       {pathname: '/', separator: ' - '},
       options,
       file.data.matter,
@@ -44,10 +44,9 @@ export default function meta(options) {
       {first: true}
     )
 
-    generators.forEach(generate)
-
-    function generate(fn) {
-      fn(data, head)
+    let index = -1
+    while (++index < generators.length) {
+      generators[index](data, head)
     }
 
     // Other:
@@ -56,18 +55,18 @@ export default function meta(options) {
 }
 
 function title(data, root) {
-  var value = join([data.title, data.name], data.separator)
-  var node
+  const value = join([data.title, data.name], data.separator)
+  let node
 
   if (data.title || data.name) {
     node = ensure(data, root, 'title')
-    node.children = [{type: 'text', value: value}]
+    node.children = [{type: 'text', value}]
   }
 }
 
 function canonical(data, root) {
-  var value = url(data)
-  var node
+  const value = url(data)
+  let node
 
   if (value) {
     node = ensure(data, root, 'link[rel=canonical]')
@@ -76,8 +75,8 @@ function canonical(data, root) {
 }
 
 function description(data, root) {
-  var value = data.description
-  var node
+  const value = data.description
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[name=description]')
@@ -86,8 +85,8 @@ function description(data, root) {
 }
 
 function keywords(data, root) {
-  var value = [].concat(data.tags || [], data.siteTags || []).filter(unique)
-  var node
+  const value = [...new Set([...(data.tags || []), ...(data.siteTags || [])])]
+  let node
 
   if (value.length > 0) {
     node = ensure(data, root, 'meta[name=keywords]')
@@ -96,8 +95,8 @@ function keywords(data, root) {
 }
 
 function author(data, root) {
-  var value = data.author || data.siteAuthor
-  var node
+  const value = data.author || data.siteAuthor
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[name=author]')
@@ -106,9 +105,9 @@ function author(data, root) {
 }
 
 function copyright(data, root) {
-  var author = data.author || data.siteAuthor
-  var date = toDate(data.published) || new Date()
-  var node
+  const author = data.author || data.siteAuthor
+  const date = toDate(data.published) || new Date()
+  let node
 
   if (author && data.copyright === true) {
     node = ensure(data, root, 'meta[name=copyright]')
@@ -118,8 +117,8 @@ function copyright(data, root) {
 }
 
 function themeColor(data, root) {
-  var value = data.color
-  var node
+  const value = data.color
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[name=theme-color]')
@@ -128,8 +127,12 @@ function themeColor(data, root) {
 }
 
 function ogType(data, root) {
-  var value = data.og ? (data.type === 'article' ? data.type : 'website') : null
-  var node
+  const value = data.og
+    ? data.type === 'article'
+      ? data.type
+      : 'website'
+    : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=og:type]')
@@ -138,8 +141,8 @@ function ogType(data, root) {
 }
 
 function ogSiteName(data, root) {
-  var value = data.og ? data.name : null
-  var node
+  const value = data.og ? data.name : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=og:site_name]')
@@ -148,8 +151,8 @@ function ogSiteName(data, root) {
 }
 
 function ogUrl(data, root) {
-  var value = data.og ? url(data) : null
-  var node
+  const value = data.og ? url(data) : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=og:url]')
@@ -158,8 +161,8 @@ function ogUrl(data, root) {
 }
 
 function ogTitle(data, root) {
-  var value = data.og ? data.title : null
-  var node
+  const value = data.og ? data.title : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=og:title]')
@@ -168,8 +171,8 @@ function ogTitle(data, root) {
 }
 
 function ogDescription(data, root) {
-  var value = data.og ? data.description : null
-  var node
+  const value = data.og ? data.description : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=og:description]')
@@ -178,35 +181,34 @@ function ogDescription(data, root) {
 }
 
 function ogImage(data, root) {
-  var images = data.og ? toImages(data.image).slice(0, 6) : []
-  var keys = ['url', 'alt', 'width', 'height']
+  const images = data.og ? toImages(data.image).slice(0, 6) : []
+  const keys = ['url', 'alt', 'width', 'height']
+  let index = -1
+  while (++index < images.length) {
+    const image = images[index]
+    let offset = -1
+    while (++offset < keys.length) {
+      const key = keys[offset]
+      const value = image[key]
 
-  images.forEach(add)
-
-  function add(image) {
-    keys.forEach(each)
-
-    function each(key) {
-      var value = image[key]
-      var node
-
-      if (!value) {
-        return
+      if (value) {
+        append(
+          data,
+          root,
+          h('meta', {
+            property: 'og:image' + (key === 'url' ? '' : ':' + key),
+            content: value
+          })
+        )
       }
-
-      node = h('meta', {
-        property: 'og:image' + (key === 'url' ? '' : ':' + key),
-        content: value
-      })
-
-      append(data, root, node)
     }
   }
 }
 
 function ogArticlePublishedTime(data, root) {
-  var value = data.og && data.type === 'article' ? toDate(data.published) : null
-  var node
+  const value =
+    data.og && data.type === 'article' ? toDate(data.published) : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=article:published_time]')
@@ -215,8 +217,9 @@ function ogArticlePublishedTime(data, root) {
 }
 
 function ogArticleModifiedTime(data, root) {
-  var value = data.og && data.type === 'article' ? toDate(data.modified) : null
-  var node
+  const value =
+    data.og && data.type === 'article' ? toDate(data.modified) : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=article:modified_time]')
@@ -225,8 +228,8 @@ function ogArticleModifiedTime(data, root) {
 }
 
 function ogArticleAuthor(data, root) {
-  var value = data.og && data.type === 'article' ? data.authorFacebook : null
-  var node
+  const value = data.og && data.type === 'article' ? data.authorFacebook : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=article:author]')
@@ -235,8 +238,8 @@ function ogArticleAuthor(data, root) {
 }
 
 function ogArticleSection(data, root) {
-  var value = data.og && data.type === 'article' ? data.section : null
-  var node
+  const value = data.og && data.type === 'article' ? data.section : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[property=article:section]')
@@ -245,23 +248,26 @@ function ogArticleSection(data, root) {
 }
 
 function ogArticleTag(data, root) {
-  var value =
+  const value =
     data.og && data.type === 'article' ? (data.tags || []).slice(0, 6) : []
+  let index = -1
 
-  value.forEach(add)
-
-  function add(value) {
-    append(data, root, h('meta', {property: 'article:tag', content: value}))
+  while (++index < value.length) {
+    append(
+      data,
+      root,
+      h('meta', {property: 'article:tag', content: value[index]})
+    )
   }
 }
 
 function twitterCard(data, root) {
-  var value = data.twitter
+  let value = data.twitter
     ? toImages(data.image)[0]
       ? 'summary_large_image'
       : 'summary'
     : null
-  var node
+  let node
 
   // If `og:type` is set (which is always created if `og` is on, and
   // `twitter:card` does not exist, then `summary` is implied. So we can remove
@@ -277,33 +283,32 @@ function twitterCard(data, root) {
 }
 
 function twitterImage(data, root) {
-  var image = data.twitter ? toImages(data.image)[0] : null
-  var keys = ['url', 'alt']
+  const image = data.twitter ? toImages(data.image)[0] : null
+  const keys = ['url', 'alt']
+  let index = -1
 
   if (image) {
-    keys.forEach(each)
-  }
+    while (++index < keys.length) {
+      const key = keys[index]
+      const value = image[key]
 
-  function each(key) {
-    var value = image[key]
-    var node
-
-    if (!value) {
-      return
+      if (value) {
+        append(
+          data,
+          root,
+          h('meta', {
+            name: 'twitter:image' + (key === 'url' ? '' : ':' + key),
+            content: value
+          })
+        )
+      }
     }
-
-    node = h('meta', {
-      name: 'twitter:image' + (key === 'url' ? '' : ':' + key),
-      content: value
-    })
-
-    append(data, root, node)
   }
 }
 
 function twitterSite(data, root) {
-  var value = data.twitter ? data.siteTwitter : null
-  var node
+  const value = data.twitter ? data.siteTwitter : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[name=twitter:site]')
@@ -312,8 +317,8 @@ function twitterSite(data, root) {
 }
 
 function twitterCreator(data, root) {
-  var value = data.twitter ? data.authorTwitter : null
-  var node
+  const value = data.twitter ? data.authorTwitter : null
+  let node
 
   if (value) {
     node = ensure(data, root, 'meta[name=twitter:creator]')
@@ -322,7 +327,7 @@ function twitterCreator(data, root) {
 }
 
 function ensure(data, root, selector) {
-  var node = $(selector, root)
+  let node = $(selector, root)
 
   if (!node) {
     node = from(selector)
@@ -338,9 +343,7 @@ function append(data, root, node) {
     data.first = false
   }
 
-  root.children.push(node)
-
-  root.children.push({type: 'text', value: '\n'})
+  root.children.push(node, {type: 'text', value: '\n'})
 }
 
 function url(data) {
@@ -360,19 +363,9 @@ function toDate(d) {
 }
 
 function toImages(d) {
-  var values = d && typeof d === 'object' && 'length' in d ? d : [d]
+  const values = Array.isArray(d) ? d : [d]
 
-  return values.map(map).filter(filter)
-
-  function map(d) {
-    return typeof d === 'string' ? {url: d} : d
-  }
-
-  function filter(d) {
-    return d && d.url
-  }
-}
-
-function unique(d, i, all) {
-  return all.indexOf(d) === i
+  return values
+    .map((d) => (typeof d === 'string' ? {url: d} : d))
+    .filter((d) => d && d.url)
 }

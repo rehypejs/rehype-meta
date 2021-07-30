@@ -3,8 +3,8 @@ import rehype from 'rehype'
 import doc from 'rehype-document'
 import meta from './index.js'
 
-test('rehype-meta', function (t) {
-  t.test('basics', function (st) {
+test('rehype-meta', (t) => {
+  t.test('basics', (st) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
@@ -726,7 +726,7 @@ test('rehype-meta', function (t) {
     st.end()
   })
 
-  t.test('All together now', function (st) {
+  t.test('All together now', (st) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
