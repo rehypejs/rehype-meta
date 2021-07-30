@@ -37,9 +37,9 @@
     "index.js"
   ],
   "dependencies": {
-    "hast-util-from-selector": "^1.0.0",
-    "hast-util-select": "^4.0.0",
-    "hastscript": "^5.0.0"
+    "hast-util-from-selector": "^2.0.0",
+    "hast-util-select": "^5.0.0",
+    "hastscript": "^7.0.0"
   },
   "devDependencies": {
     "c8": "^7.0.0",

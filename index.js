@@ -1,8 +1,6 @@
-import h from 'hastscript'
-import select from 'hast-util-select'
-import from from 'hast-util-from-selector'
-
-const $ = select.select
+import {h} from 'hastscript'
+import {select} from 'hast-util-select'
+import {fromSelector} from 'hast-util-from-selector'
 
 const fbBase = 'https://www.facebook.com/'
 
@@ -327,10 +325,10 @@ function twitterCreator(data, root) {
 }
 
 function ensure(data, root, selector) {
-  let node = $(selector, root)
+  let node = select(selector, root)
 
   if (!node) {
-    node = from(selector)
+    node = fromSelector(selector)
     append(data, root, node)
   }
 
