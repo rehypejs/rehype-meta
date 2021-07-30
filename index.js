@@ -1,10 +1,8 @@
-'use strict'
+import h from 'hastscript'
+import select from 'hast-util-select'
+import from from 'hast-util-from-selector'
 
-var h = require('hastscript')
-var $ = require('hast-util-select').select
-var from = require('hast-util-from-selector')
-
-module.exports = meta
+const $ = select.select
 
 var fbBase = 'https://www.facebook.com/'
 
@@ -33,7 +31,7 @@ var generators = [
   twitterCreator
 ]
 
-function meta(options) {
+export default function meta(options) {
   return transform
 
   function transform(tree, file) {

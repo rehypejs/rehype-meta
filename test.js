@@ -1,9 +1,7 @@
-'use strict'
-
-var test = require('tape')
-var rehype = require('rehype')
-var doc = require('rehype-document')
-var meta = require('.')
+import test from 'tape'
+import rehype from 'rehype'
+import doc from 'rehype-document'
+import meta from './index.js'
 
 test('rehype-meta', function (t) {
   t.test('basics', function (st) {
@@ -770,8 +768,7 @@ test('rehype-meta', function (t) {
             'NYC'
           ],
           image: {
-            url:
-              'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
+            url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
             alt: 'M.T.A. map designed in 1979',
             width: '1050',
             height: '550'
@@ -857,8 +854,7 @@ test('rehype-meta', function (t) {
             'wedges'
           ],
           image: {
-            url:
-              'https://hostthetoast.com/wp-content/uploads/2014/06/Salt-and-Vinegar-Potatoes-6.jpg',
+            url: 'https://hostthetoast.com/wp-content/uploads/2014/06/Salt-and-Vinegar-Potatoes-6.jpg',
             width: '670',
             height: '1012'
           },
