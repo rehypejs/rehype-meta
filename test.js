@@ -619,7 +619,7 @@ test('rehypeMeta', (t) => {
         .use(rehypeMeta, {
           og: true,
           type: 'article',
-          published: new Date(1234567890123)
+          published: new Date(1_234_567_890_123)
         })
         .processSync('')
         .toString(),
@@ -639,7 +639,7 @@ test('rehypeMeta', (t) => {
         .use(rehypeMeta, {
           og: true,
           type: 'article',
-          modified: new Date(1234567890123)
+          modified: new Date(1_234_567_890_123)
         })
         .processSync('')
         .toString(),
