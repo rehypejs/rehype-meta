@@ -1,14 +1,14 @@
 import test from 'tape'
-import rehype from 'rehype'
-import doc from 'rehype-document'
-import meta from './index.js'
+import {rehype} from 'rehype'
+import rehypeDocument from 'rehype-document'
+import rehypeMeta from './index.js'
 
-test('rehype-meta', (t) => {
+test('rehypeMeta', (t) => {
   t.test('basics', (st) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta)
+        .use(rehypeMeta)
         .processSync('')
         .toString(),
       '<head></head>\n',
@@ -16,7 +16,7 @@ test('rehype-meta', (t) => {
     )
 
     st.equal(
-      rehype().use(meta).processSync('').toString(),
+      rehype().use(rehypeMeta).processSync('').toString(),
       '<html><head></head><body></body></html>',
       'should work in document mode'
     )
@@ -24,7 +24,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {title: 'About'})
+        .use(rehypeMeta, {title: 'About'})
         .processSync('')
         .toString(),
       ['<head>', '<title>About</title>', '</head>', ''].join('\n'),
@@ -34,7 +34,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {title: 'About', name: 'Example'})
+        .use(rehypeMeta, {title: 'About', name: 'Example'})
         .processSync('')
         .toString(),
       ['<head>', '<title>About - Example</title>', '</head>', ''].join('\n'),
@@ -44,7 +44,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {title: 'About', name: 'Example', separator: ' | '})
+        .use(rehypeMeta, {title: 'About', name: 'Example', separator: ' | '})
         .processSync('')
         .toString(),
       ['<head>', '<title>About | Example</title>', '</head>', ''].join('\n'),
@@ -54,7 +54,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {origin: 'https://a.com'})
+        .use(rehypeMeta, {origin: 'https://a.com'})
         .processSync('')
         .toString(),
       [
@@ -69,7 +69,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {origin: 'https://a.com', pathname: '/b'})
+        .use(rehypeMeta, {origin: 'https://a.com', pathname: '/b'})
         .processSync('')
         .toString(),
       [
@@ -84,7 +84,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {description: 'Hello, World!'})
+        .use(rehypeMeta, {description: 'Hello, World!'})
         .processSync('')
         .toString(),
       [
@@ -99,7 +99,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {tags: ['a', 'b', 'c']})
+        .use(rehypeMeta, {tags: ['a', 'b', 'c']})
         .processSync('')
         .toString(),
       [
@@ -114,7 +114,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {siteTags: ['a', 'b', 'c']})
+        .use(rehypeMeta, {siteTags: ['a', 'b', 'c']})
         .processSync('')
         .toString(),
       [
@@ -129,7 +129,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {tags: ['a', 'b'], siteTags: ['b', 'c']})
+        .use(rehypeMeta, {tags: ['a', 'b'], siteTags: ['b', 'c']})
         .processSync('')
         .toString(),
       [
@@ -144,7 +144,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {author: 'Jane X. Doe'})
+        .use(rehypeMeta, {author: 'Jane X. Doe'})
         .processSync('')
         .toString(),
       [
@@ -159,7 +159,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {author: 'Jane X. Doe', copyright: true})
+        .use(rehypeMeta, {author: 'Jane X. Doe', copyright: true})
         .processSync('')
         .toString(),
       [
@@ -175,7 +175,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {siteAuthor: 'Jane X. Doe'})
+        .use(rehypeMeta, {siteAuthor: 'Jane X. Doe'})
         .processSync('')
         .toString(),
       [
@@ -190,7 +190,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {siteAuthor: 'Jane X. Doe', copyright: true})
+        .use(rehypeMeta, {siteAuthor: 'Jane X. Doe', copyright: true})
         .processSync('')
         .toString(),
       [
@@ -206,7 +206,11 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {author: 'Jane X. Doe', published: '2018', copyright: true})
+        .use(rehypeMeta, {
+          author: 'Jane X. Doe',
+          published: '2018',
+          copyright: true
+        })
         .processSync('')
         .toString(),
       [
@@ -222,7 +226,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {color: '123456'})
+        .use(rehypeMeta, {color: '123456'})
         .processSync('')
         .toString(),
       [
@@ -237,7 +241,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {color: '#123456'})
+        .use(rehypeMeta, {color: '#123456'})
         .processSync('')
         .toString(),
       [
@@ -252,7 +256,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {twitter: true})
+        .use(rehypeMeta, {twitter: true})
         .processSync('')
         .toString(),
       [
@@ -267,7 +271,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, twitter: true})
+        .use(rehypeMeta, {og: true, twitter: true})
         .processSync('')
         .toString(),
       [
@@ -282,7 +286,10 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {twitter: true, image: 'https://example.com/index.png'})
+        .use(rehypeMeta, {
+          twitter: true,
+          image: 'https://example.com/index.png'
+        })
         .processSync('')
         .toString(),
       [
@@ -298,7 +305,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           twitter: true,
           image: {url: 'https://example.com/index.png', alt: 'A'}
         })
@@ -318,7 +325,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {twitter: true, siteTwitter: 'example'})
+        .use(rehypeMeta, {twitter: true, siteTwitter: 'example'})
         .processSync('')
         .toString(),
       [
@@ -334,7 +341,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {twitter: true, siteTwitter: '@example'})
+        .use(rehypeMeta, {twitter: true, siteTwitter: '@example'})
         .processSync('')
         .toString(),
       [
@@ -350,7 +357,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {twitter: true, authorTwitter: 'example'})
+        .use(rehypeMeta, {twitter: true, authorTwitter: 'example'})
         .processSync('')
         .toString(),
       [
@@ -366,7 +373,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {twitter: true, authorTwitter: '@example'})
+        .use(rehypeMeta, {twitter: true, authorTwitter: '@example'})
         .processSync('')
         .toString(),
       [
@@ -382,7 +389,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true})
+        .use(rehypeMeta, {og: true})
         .processSync('')
         .toString(),
       [
@@ -397,7 +404,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, title: 'About'})
+        .use(rehypeMeta, {og: true, title: 'About'})
         .processSync('')
         .toString(),
       [
@@ -414,7 +421,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, name: 'Example'})
+        .use(rehypeMeta, {og: true, name: 'Example'})
         .processSync('')
         .toString(),
       [
@@ -431,7 +438,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, description: 'Lorem ipsum'})
+        .use(rehypeMeta, {og: true, description: 'Lorem ipsum'})
         .processSync('')
         .toString(),
       [
@@ -448,7 +455,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, origin: 'https://a.com'})
+        .use(rehypeMeta, {og: true, origin: 'https://a.com'})
         .processSync('')
         .toString(),
       [
@@ -465,7 +472,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {image: 'https://example.com/index.png'})
+        .use(rehypeMeta, {image: 'https://example.com/index.png'})
         .processSync('')
         .toString(),
       '<head></head>\n',
@@ -475,7 +482,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, image: 'https://example.com/index.png'})
+        .use(rehypeMeta, {og: true, image: 'https://example.com/index.png'})
         .processSync('')
         .toString(),
       [
@@ -491,7 +498,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           image: {url: 'https://example.com/index.png', alt: 'Alpha'}
         })
@@ -511,7 +518,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           image: {url: 'https://example.com/index.png', width: 1}
         })
@@ -531,7 +538,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           image: {url: 'https://example.com/index.png', height: 1}
         })
@@ -551,7 +558,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           image: {alt: '?', width: 1, height: 1}
         })
@@ -569,7 +576,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           image: ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         })
@@ -593,7 +600,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, type: 'article'})
+        .use(rehypeMeta, {og: true, type: 'article'})
         .processSync('')
         .toString(),
       [
@@ -608,7 +615,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           type: 'article',
           published: new Date(1234567890123)
@@ -628,7 +635,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           type: 'article',
           modified: new Date(1234567890123)
@@ -648,7 +655,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           type: 'article',
           published: '2019-12-04T22:00:00.000Z'
@@ -668,7 +675,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, type: 'article', authorFacebook: 'example'})
+        .use(rehypeMeta, {og: true, type: 'article', authorFacebook: 'example'})
         .processSync('')
         .toString(),
       [
@@ -684,7 +691,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {og: true, type: 'article', section: 'a'})
+        .use(rehypeMeta, {og: true, type: 'article', section: 'a'})
         .processSync('')
         .toString(),
       [
@@ -700,7 +707,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           og: true,
           type: 'article',
           tags: ['a', 'b', 'c', 'd', 'e', 'f', 'g']
@@ -730,7 +737,7 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(meta, {
+        .use(rehypeMeta, {
           twitter: true,
           og: true,
           copyright: true,
@@ -819,8 +826,8 @@ test('rehype-meta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
-        .use(doc, {language: 'en', css: 'index.css', js: 'index.js'})
-        .use(meta, {
+        .use(rehypeDocument, {language: 'en', css: 'index.css', js: 'index.js'})
+        .use(rehypeMeta, {
           twitter: true,
           og: true,
           copyright: true,
