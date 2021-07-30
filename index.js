@@ -1,3 +1,101 @@
+/**
+ * @typedef {import('hast').Root} Root
+ * @typedef {import('hast').Element} Element
+ * @typedef {Root['children'][number]} Child
+ *
+ * @typedef Image
+ * @property {string} url
+ * @property {string|undefined} [alt]
+ * @property {string|number|undefined} [width]
+ * @property {string|number|undefined} [height]
+ *
+ * @typedef Options
+ * @property {boolean} [og=false]
+ *   Whether to add Open Graph metadata (`boolean`, default: `false`).
+ * @property {boolean} [twitter=false]
+ *   Whether to add Twitter metadata (`boolean`, default: `false`).
+ * @property {boolean} [copyright=false]
+ *   Whether to add copyright metadata (`boolean`, default: `false`).
+ * @property {'article'|'website'} [type='website']
+ *   What the document refers to (`'website' | 'article'`, default: `website`).
+ * @property {string} [origin]
+ *   Origin the file will be hosted on (`string`, optional, example:
+ *   `https://www.nytimes.com`).
+ * @property {string} [pathname='/']
+ *   Absolute pathname of where the file will be hosted (`string`, default: `/`,
+ *   example: `/interactive/2019/12/02/nyregion/nyc-subway-map.html`).
+ * @property {string} [name]
+ *   Name of the whole site (`string`, optional, example: `'The New York
+ *   Times'`).
+ * @property {string[]} [siteTags]
+ *   Tags associated with the whole site (`Array.<string>`, optional, example:
+ *   `['US Politics', 'Impeachment', 'NATO', 'London', 'Food', 'Poverty',
+ *   'Climate Change', 'Global Warming']`).
+ * @property {string} [siteAuthor]
+ *   Name of the author of the whole site (`string`, optional, example:
+ *   `'The New York Times'`).
+ * @property {string} [siteTwitter]
+ *   Twitter username of the whole site (`string`, optional, example:
+ *   `'@nytimes'`).
+ * @property {string} [color]
+ *   Hexadecimal theme color of document or site (`string`, optional, example:
+ *   `'#bada55'`).
+ * @property {string} [author]
+ *   Name of the author of the document (`string`, optional, example:
+ *   `'Jane Doe'`).
+ * @property {string} [authorTwitter]
+ *   Twitter username of the author of the document (`string`, optional,
+ *   example: `'@janedoe'`).
+ * @property {string} [authorFacebook]
+ *   Facebook username of the author of the document (`string`, optional,
+ *   example: `'example'`).
+ * @property {string} [title]
+ *   Title of the document (`string`, optional, example: `'The New York City
+ *   Subway Map as You’ve Never Seen It Before'`).
+ * @property {string} [separator=' - ']
+ *   Value to use to join the `title` and `name` together (`string`, default:
+ *   `' - '`).
+ * @property {string} [description]
+ *   Value used to join the `title` and `name` together if both exist (`string`,
+ *   optional, example: `'The city has changed drastically over the past 40
+ *   years, yet the M.T.A. map designed in 1979 has largely endured.'`).
+ * @property {string} [section]
+ *   Section associated with the document (`string`, optional, example: `'New
+ *   York'`).
+ * @property {string[]} [tags]
+ *   Tags associated with the document (`Array.<string>`, optional, example:
+ *   `['Subway', 'Map', 'Public Transit', 'Design', 'MTA', 'Massimo Vignelli',
+ *   'NYC']`).
+ * @property {string|string[]|Image|Image[]} [image]
+ *   One or more images associated with the document (`string`, `Image`, or
+ *   `Array.<string | Image>`, optional).
+ *   If strings are passed, they are seen as `Image` objects with a `url` field
+ *   set to that value.
+ *
+ *   `Image`:
+ *
+ *   *   `url` (`string`, required, example:
+ *        `'https://static01.nyt.com/images/…/mta-crop-jumbo.jpg'`)
+ *   *   `alt` (`string`, optional, example: `'M.T.A. map designed in 1979'`)
+ *   *   `width` (`string`, optional, example: `'1050'`)
+ *   *   `height` (`string`, optional, example: `'550'`)
+ * @property {string|Date} [published]
+ *   Date the document (or site) was first published (`Date` or `string`,
+ *   optional, example: `'2019-12-02T10:00:00.000Z'`).
+ *
+ *   *Note*: parsing a string is [inconsistent][timestamp], prefer dates.
+ * @property {string|Date} [modified]
+ *   Date the document was last modified (`Date` or `string`, optional, example:
+ *   `'2019-12-03T19:13:00.000Z'`).
+ *
+ *   *Note*: parsing a string is [inconsistent][timestamp], prefer dates.
+ *
+ * @typedef DataFields
+ * @property {boolean} first
+ *
+ * @typedef {Options & DataFields} Data
+ */
+
 import {h} from 'hastscript'
 import {select} from 'hast-util-select'
 import {fromSelector} from 'hast-util-from-selector'
@@ -29,13 +127,15 @@ const generators = [
   twitterCreator
 ]
 
+/**
+ * @type {import('unified').Plugin<[Options] | void[], Root>}
+ */
 export default function meta(options) {
-  return transform
-
-  function transform(tree, file) {
-    const head = ensure({first: false}, tree, 'head', false)
+  return (tree, file) => {
+    const head = ensure({first: false}, tree, 'head')
+    /** @type {Data} */
     const data = Object.assign(
-      {pathname: '/', separator: ' - '},
+      {pathname: '/'},
       options,
       file.data.matter,
       file.data.meta,
@@ -52,139 +152,182 @@ export default function meta(options) {
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function title(data, root) {
-  const value = join([data.title, data.name], data.separator)
-  let node
+  const value = join([data.title, data.name], data.separator || ' - ')
 
   if (data.title || data.name) {
-    node = ensure(data, root, 'title')
+    const node = ensure(data, root, 'title')
     node.children = [{type: 'text', value}]
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function canonical(data, root) {
   const value = url(data)
-  let node
 
   if (value) {
-    node = ensure(data, root, 'link[rel=canonical]')
+    const node = ensure(data, root, 'link[rel=canonical]')
     node.properties.href = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function description(data, root) {
   const value = data.description
-  let node
 
   if (value) {
-    node = ensure(data, root, 'meta[name=description]')
+    const node = ensure(data, root, 'meta[name=description]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function keywords(data, root) {
   const value = [...new Set([...(data.tags || []), ...(data.siteTags || [])])]
-  let node
 
   if (value.length > 0) {
-    node = ensure(data, root, 'meta[name=keywords]')
+    const node = ensure(data, root, 'meta[name=keywords]')
     node.properties.content = value.join(', ')
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function author(data, root) {
   const value = data.author || data.siteAuthor
-  let node
 
   if (value) {
-    node = ensure(data, root, 'meta[name=author]')
+    const node = ensure(data, root, 'meta[name=author]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function copyright(data, root) {
   const author = data.author || data.siteAuthor
   const date = toDate(data.published) || new Date()
-  let node
 
   if (author && data.copyright === true) {
-    node = ensure(data, root, 'meta[name=copyright]')
+    const node = ensure(data, root, 'meta[name=copyright]')
     node.properties.content =
       '© ' + String(date.getUTCFullYear()) + ' ' + author
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function themeColor(data, root) {
   const value = data.color
-  let node
 
   if (value) {
-    node = ensure(data, root, 'meta[name=theme-color]')
+    const node = ensure(data, root, 'meta[name=theme-color]')
     node.properties.content = prefix(value, '#')
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogType(data, root) {
   const value = data.og
     ? data.type === 'article'
       ? data.type
       : 'website'
-    : null
-  let node
+    : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=og:type]')
+    const node = ensure(data, root, 'meta[property=og:type]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogSiteName(data, root) {
-  const value = data.og ? data.name : null
-  let node
+  const value = data.og ? data.name : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=og:site_name]')
+    const node = ensure(data, root, 'meta[property=og:site_name]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogUrl(data, root) {
-  const value = data.og ? url(data) : null
-  let node
+  const value = data.og ? url(data) : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=og:url]')
+    const node = ensure(data, root, 'meta[property=og:url]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogTitle(data, root) {
-  const value = data.og ? data.title : null
-  let node
+  const value = data.og ? data.title : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=og:title]')
+    const node = ensure(data, root, 'meta[property=og:title]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogDescription(data, root) {
-  const value = data.og ? data.description : null
-  let node
+  const value = data.og ? data.description : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=og:description]')
+    const node = ensure(data, root, 'meta[property=og:description]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogImage(data, root) {
   const images = data.og ? toImages(data.image).slice(0, 6) : []
+  /** @type {(keyof Image)[]} */
   const keys = ['url', 'alt', 'width', 'height']
   let index = -1
+
   while (++index < images.length) {
     const image = images[index]
     let offset = -1
+
     while (++offset < keys.length) {
       const key = keys[offset]
       const value = image[key]
@@ -203,48 +346,65 @@ function ogImage(data, root) {
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogArticlePublishedTime(data, root) {
   const value =
-    data.og && data.type === 'article' ? toDate(data.published) : null
-  let node
+    data.og && data.type === 'article' ? toDate(data.published) : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=article:published_time]')
+    const node = ensure(data, root, 'meta[property=article:published_time]')
     node.properties.content = value.toISOString()
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogArticleModifiedTime(data, root) {
   const value =
-    data.og && data.type === 'article' ? toDate(data.modified) : null
-  let node
+    data.og && data.type === 'article' ? toDate(data.modified) : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=article:modified_time]')
+    const node = ensure(data, root, 'meta[property=article:modified_time]')
     node.properties.content = value.toISOString()
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogArticleAuthor(data, root) {
-  const value = data.og && data.type === 'article' ? data.authorFacebook : null
-  let node
+  const value =
+    data.og && data.type === 'article' ? data.authorFacebook : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=article:author]')
+    const node = ensure(data, root, 'meta[property=article:author]')
     node.properties.content = fbBase + value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogArticleSection(data, root) {
-  const value = data.og && data.type === 'article' ? data.section : null
-  let node
+  const value = data.og && data.type === 'article' ? data.section : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[property=article:section]')
+    const node = ensure(data, root, 'meta[property=article:section]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function ogArticleTag(data, root) {
   const value =
     data.og && data.type === 'article' ? (data.tags || []).slice(0, 6) : []
@@ -259,29 +419,37 @@ function ogArticleTag(data, root) {
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function twitterCard(data, root) {
-  let value = data.twitter
+  const value = data.twitter
     ? toImages(data.image)[0]
       ? 'summary_large_image'
       : 'summary'
-    : null
-  let node
+    : undefined
 
   // If `og:type` is set (which is always created if `og` is on, and
   // `twitter:card` does not exist, then `summary` is implied. So we can remove
   // explicit summary)
   if (value === 'summary' && data.og) {
-    value = null
+    return
   }
 
   if (value) {
-    node = ensure(data, root, 'meta[name=twitter:card]')
+    const node = ensure(data, root, 'meta[name=twitter:card]')
     node.properties.content = value
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function twitterImage(data, root) {
-  const image = data.twitter ? toImages(data.image)[0] : null
+  const image = data.twitter ? toImages(data.image)[0] : undefined
+  /** @type {(keyof Image)[]} */
   const keys = ['url', 'alt']
   let index = -1
 
@@ -304,26 +472,38 @@ function twitterImage(data, root) {
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function twitterSite(data, root) {
-  const value = data.twitter ? data.siteTwitter : null
-  let node
+  const value = data.twitter ? data.siteTwitter : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[name=twitter:site]')
+    const node = ensure(data, root, 'meta[name=twitter:site]')
     node.properties.content = prefix(value, '@')
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
 function twitterCreator(data, root) {
-  const value = data.twitter ? data.authorTwitter : null
-  let node
+  const value = data.twitter ? data.authorTwitter : undefined
 
   if (value) {
-    node = ensure(data, root, 'meta[name=twitter:creator]')
+    const node = ensure(data, root, 'meta[name=twitter:creator]')
     node.properties.content = prefix(value, '@')
   }
 }
 
+/**
+ * @param {Data} data
+ * @param {Root|Element} root
+ * @param {string} selector
+ * @returns {Element & Required<Pick<Element, 'properties'>>}
+ */
 function ensure(data, root, selector) {
   let node = select(selector, root)
 
@@ -332,9 +512,21 @@ function ensure(data, root, selector) {
     append(data, root, node)
   }
 
+  // Always available.
+  /* c8 ignore next 3 */
+  if (!node.properties) {
+    node.properties = {}
+  }
+
+  // @ts-expect-error: hush.
   return node
 }
 
+/**
+ * @param {Data} data
+ * @param {Root|Element} root
+ * @param {Element} node
+ */
 function append(data, root, node) {
   if (data.first) {
     root.children.push({type: 'text', value: '\n'})
@@ -344,24 +536,51 @@ function append(data, root, node) {
   root.children.push(node, {type: 'text', value: '\n'})
 }
 
+/**
+ * @param {Data} data
+ * @returns {string}
+ */
 function url(data) {
   return data.origin ? data.origin + data.pathname : ''
 }
 
+/**
+ * @template Thing
+ * @param {Thing[]} values
+ * @param {string} separator
+ * @returns {string}
+ */
 function join(values, separator) {
   return values.filter(Boolean).join(separator)
 }
 
+/**
+ * @param {string} value
+ * @param {string} prefix
+ * @returns {string}
+ */
 function prefix(value, prefix) {
   return value.charAt(0) === prefix ? value : prefix + value
 }
 
+/**
+ * @param {Date|string|undefined} d
+ * @returns {Date|undefined}
+ */
 function toDate(d) {
-  return d ? (d.toJSON ? d : new Date(String(d))) : null
+  return d
+    ? typeof d === 'object' && 'toJSON' in d
+      ? d
+      : new Date(String(d))
+    : undefined
 }
 
+/**
+ * @param {string|string[]|Image|Image[]} [d]
+ * @returns {Image[]}
+ */
 function toImages(d) {
-  const values = Array.isArray(d) ? d : [d]
+  const values = d ? (Array.isArray(d) ? d : [d]) : []
 
   return values
     .map((d) => (typeof d === 'string' ? {url: d} : d))

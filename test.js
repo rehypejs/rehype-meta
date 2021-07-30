@@ -558,6 +558,7 @@ test('rehypeMeta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
+        // @ts-expect-error: URL missing.
         .use(rehypeMeta, {
           og: true,
           image: {alt: '?', width: 1, height: 1}

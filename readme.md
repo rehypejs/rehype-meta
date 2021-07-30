@@ -15,6 +15,7 @@
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
+    *   [`unified().use(rehypeMeta[, options])`](#unifieduserehypemeta-options)
     *   [`Config`](#config)
 *   [Metadata](#metadata)
 *   [Security](#security)
