@@ -298,8 +298,8 @@ Affects: [`title`][m-title].
 
 ###### `config.description`
 
-Value used to join the `title` and `name` together if both exist (`string`,
-optional, example: `'The city has changed drastically over the past 40 years,
+Description of the document (`string`, optional, example:
+`'The city has changed drastically over the past 40 years,
 yet the M.T.A. map designed in 1979 has largely endured.'`).
 
 Affects: [`meta[name=description]`][m-description],
