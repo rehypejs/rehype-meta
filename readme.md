@@ -167,7 +167,16 @@ above order (so `file.data.meta` takes precedence over `options`).
 Only `options` is enough if every file should have the same metadata.
 If your workflow enables front matter, `vfile-matter` is a good way to keep data
 in files.
-Alternatively, do it yourself by adding data at `file.data.meta`.
+Alternatively, do it yourself by adding data at `file.data.meta`, which can also
+be done by plugins:
+
+*   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
+    — Infer [`modified`][c-modified], [`published`][c-published], and
+    [`author`][c-author] from Git
+*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
+    — Infer [`title`][c-title] from the document
+*   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
+    — Infer [`description`][c-description] from the document
 
 ###### `config.og`
 
@@ -770,6 +779,12 @@ to define metadata from within a because of the [`matter`][matter] integration .
 
 ## Related
 
+*   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
+    — Infer file metadata from Git
+*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
+    — Infer file metadata from the title of a document
+*   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
+    — Infer file metadata from the description of a document
 *   [`rehype-document`](https://github.com/rehypejs/rehype-document)
     — Wrap a document around the tree
 *   [`rehype-format`](https://github.com/rehypejs/rehype-format)
