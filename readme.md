@@ -812,7 +812,7 @@ If `twitter` is `true` and `section` is `'Food'`:
 <meta name="twitter:data1" content="Food">
 ```
 
-If `twitter` is `true`, `section` is not defined, and `reading time` is `3.083`:
+If `twitter` is `true`, `section` is not defined, and `readingTime` is `3.083`:
 
 ```html
 <meta name="twitter:label1" content="Reading time">
