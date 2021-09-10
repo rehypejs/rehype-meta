@@ -89,7 +89,8 @@ rehype()
       height: '550'
     },
     published: '2019-12-02T10:00:00.000Z',
-    modified: '2019-12-03T19:13:00.000Z'
+    modified: '2019-12-03T19:13:00.000Z',
+    readingTime: 11.1
   })
   .process('')
   .then((file) => {
@@ -133,6 +134,10 @@ no issues found
 <meta name="twitter:image:alt" content="M.T.A. map designed in 1979">
 <meta name="twitter:site" content="@nytimes">
 <meta name="twitter:creator" content="@jane">
+<meta name="twitter:label1" content="Posted in">
+<meta name="twitter:data1" content="New York">
+<meta name="twitter:label2" content="Reading time">
+<meta name="twitter:data2" content="12 minutes">
 </head>
 ```
 
@@ -201,7 +206,11 @@ Whether to add Twitter metadata (`boolean`, default: `false`).
 Affects: [`meta[name=twitter:card]`][m-twitter-card],
 [`meta[name=twitter:image]`][m-twitter-image],
 [`meta[name=twitter:site]`][m-twitter-site],
-[`meta[name=twitter:creator]`][m-twitter-creator].
+[`meta[name=twitter:creator]`][m-twitter-creator],
+[`meta[name=twitter:label1]`][m-twitter-label1],
+[`meta[name=twitter:data1]`][m-twitter-data1],
+[`meta[name=twitter:label2]`][m-twitter-label2],
+[`meta[name=twitter:data2]`][m-twitter-data2].
 
 ###### `config.copyright`
 
@@ -319,7 +328,8 @@ Affects: [`meta[name=description]`][m-description],
 Section associated with the document (`string`, optional, example:
 `'New York'`).
 
-Affects: [`meta[property=article:section]`][m-article-section].
+Affects: [`meta[property=article:section]`][m-article-section], [`meta[name=twitter:label1]`][m-twitter-label1],
+[`meta[name=twitter:data1]`][m-twitter-data1].
 
 ###### `config.tags`
 
@@ -366,6 +376,17 @@ Date the document was last modified (`Date` or `string`, optional, example:
 *Note*: parsing a string is [inconsistent][timestamp], prefer dates.
 
 Affects: [`meta[property=article:modified_time]`][m-article-modified-time].
+
+###### `config.readingTime`
+
+Estimated reading time in minutes for the document (`[number, number]` or
+`number`, optional, example: `1.219403`).
+If two numbers are given, they represent a range of two estimates.
+
+Affects: [`meta[name=twitter:label1]`][m-twitter-label1],
+[`meta[name=twitter:data1]`][m-twitter-data1],
+[`meta[name=twitter:label2]`][m-twitter-label2],
+[`meta[name=twitter:data2]`][m-twitter-data2].
 
 ## Metadata
 
@@ -772,6 +793,59 @@ If `twitter` is `true` and `authorTwitter` is `'@example'`:
 <meta name="twitter:creator" content="@example">
 ```
 
+###### `meta[name=twitter:label1]`
+
+###### `meta[name=twitter:data1]`
+
+Affected by: [`twitter`][c-twitter], [`section`][c-section],
+[`readingTime`][c-readingtime].
+
+*Note*: this data is used by Slack, not by Twitter.
+
+If `twitter` is not `true`, `meta[name=twitter:label1]` and
+`meta[name=twitter:data1]` are not added.
+
+If `twitter` is `true` and `section` is `'Food'`:
+
+```html
+<meta name="twitter:label1" content="Posted in">
+<meta name="twitter:data1" content="Food">
+```
+
+If `twitter` is `true`, `section` is not defined, and `reading time` is `3.083`:
+
+```html
+<meta name="twitter:label1" content="Reading time">
+<meta name="twitter:data1" content="4 minutes">
+```
+
+###### `meta[name=twitter:label2]`
+
+###### `meta[name=twitter:data2]`
+
+Affected by: [`twitter`][c-twitter], [`section`][c-section],
+[`readingTime`][c-readingtime].
+
+*Note*: this data is used by Slack, not by Twitter.
+
+If `twitter` is not `true`, `section` is not defined, or `readingTime` is not
+defined, `meta[name=twitter:label2]` and `meta[name=twitter:data2]` are not
+added.
+
+If `twitter` is `true`, `section` is defined, and `readingTime` is `0.8`:
+
+```html
+<meta name="twitter:label2" content="Reading time">
+<meta name="twitter:data2" content="1 minute">
+```
+
+If `twitter` is `true`, `section` is defined, and `readingTime` is `[8, 12]`:
+
+```html
+<meta name="twitter:label2" content="Reading time">
+<meta name="twitter:data2" content="8-12 minutes">
+```
+
 ## Security
 
 Use of `rehype-meta` is relatively safe, however, it is possible for an attacker
@@ -902,6 +976,8 @@ abide by its terms.
 
 [c-modified]: #configmodified
 
+[c-readingtime]: #configreadingtime
+
 [m-title]: #title
 
 [m-canonical]: #linkrelcanonical
@@ -945,3 +1021,11 @@ abide by its terms.
 [m-twitter-site]: #metanametwittersite
 
 [m-twitter-creator]: #metanametwittercreator
+
+[m-twitter-label1]: #metanametwitterlabel1
+
+[m-twitter-data1]: #metanametwitterdata1
+
+[m-twitter-label2]: #metanametwitterlabel2
+
+[m-twitter-data2]: #metanametwitterdata2

@@ -89,6 +89,9 @@
  *   `'2019-12-03T19:13:00.000Z'`).
  *
  *   *Note*: parsing a string is [inconsistent][timestamp], prefer dates.
+ * @property {number|[number]|[number, number]} [readingTime]
+ *   Reading time of the document in minutes (`number`, optional).
+ *   If two numbers are given, they represent a range of two estimates.
  *
  * @typedef DataFields
  * @property {boolean} first
@@ -124,7 +127,8 @@ const generators = [
   twitterCard,
   twitterImage,
   twitterSite,
-  twitterCreator
+  twitterCreator,
+  twitterData
 ]
 
 /**
@@ -495,6 +499,49 @@ function twitterCreator(data, root) {
   if (value) {
     const node = ensure(data, root, 'meta[name=twitter:creator]')
     node.properties.content = prefix(value, '@')
+  }
+}
+
+/**
+ * @param {Data} data
+ * @param {Element} root
+ */
+function twitterData(data, root) {
+  const {twitter, section, readingTime} = data
+  const time = (
+    readingTime
+      ? Array.isArray(readingTime)
+        ? readingTime
+        : [readingTime, readingTime]
+      : []
+  ).map((d) => Math.ceil(d))
+  /** @type {string|undefined} */
+  let timeLabel
+
+  if (time.length > 1 && time[0] !== time[1]) {
+    timeLabel = time[0] + '-' + time[1] + ' minutes'
+  } else if (time[0]) {
+    timeLabel = time[0] + ' minute' + (time[0] > 1 ? 's' : '')
+  }
+
+  const items = twitter
+    ? [
+        {label: 'Posted in', data: section},
+        {label: 'Reading time', data: timeLabel}
+      ].filter((d) => d.data !== undefined)
+    : []
+
+  let index = -1
+
+  while (++index < items.length) {
+    const no = index + 1
+    ensure(
+      data,
+      root,
+      'meta[name=twitter:label' + no + ']'
+    ).properties.content = items[index].label
+    ensure(data, root, 'meta[name=twitter:data' + no + ']').properties.content =
+      items[index].data
   }
 }
 

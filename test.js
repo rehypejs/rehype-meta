@@ -731,6 +731,76 @@ test('rehypeMeta', (t) => {
       'should add up to 6 `meta[property=article:tag]` if `og` is true, `type` is `article`, and `tags` are set'
     )
 
+    st.equal(
+      rehype()
+        .data('settings', {fragment: true})
+        .use(rehypeMeta, {twitter: true, section: 'a'})
+        .processSync('')
+        .toString(),
+      [
+        '<head>',
+        '<meta name="twitter:card" content="summary">',
+        '<meta name="twitter:label1" content="Posted in">',
+        '<meta name="twitter:data1" content="a">',
+        '</head>',
+        ''
+      ].join('\n'),
+      'should add `meta[name=twitter:label1]`, `meta[name=twitter:data1]` if `twitter` is true and `section` is set'
+    )
+
+    st.equal(
+      rehype()
+        .data('settings', {fragment: true})
+        .use(rehypeMeta, {twitter: true, readingTime: 0.1})
+        .processSync('')
+        .toString(),
+      [
+        '<head>',
+        '<meta name="twitter:card" content="summary">',
+        '<meta name="twitter:label1" content="Reading time">',
+        '<meta name="twitter:data1" content="1 minute">',
+        '</head>',
+        ''
+      ].join('\n'),
+      'should add `meta[name=twitter:label1]`, `meta[name=twitter:data1]` if `twitter` is true, `readingTime` is set, and section is not'
+    )
+
+    st.equal(
+      rehype()
+        .data('settings', {fragment: true})
+        .use(rehypeMeta, {twitter: true, section: 'a', readingTime: 0.1})
+        .processSync('')
+        .toString(),
+      [
+        '<head>',
+        '<meta name="twitter:card" content="summary">',
+        '<meta name="twitter:label1" content="Posted in">',
+        '<meta name="twitter:data1" content="a">',
+        '<meta name="twitter:label2" content="Reading time">',
+        '<meta name="twitter:data2" content="1 minute">',
+        '</head>',
+        ''
+      ].join('\n'),
+      'should add `meta[name=twitter:label2]`, `meta[name=twitter:data2]` if `twitter` is true, `readingTime` is set, and section is set'
+    )
+
+    st.equal(
+      rehype()
+        .data('settings', {fragment: true})
+        .use(rehypeMeta, {twitter: true, readingTime: [8.2, 11.1]})
+        .processSync('')
+        .toString(),
+      [
+        '<head>',
+        '<meta name="twitter:card" content="summary">',
+        '<meta name="twitter:label1" content="Reading time">',
+        '<meta name="twitter:data1" content="9-12 minutes">',
+        '</head>',
+        ''
+      ].join('\n'),
+      'should set `meta[name=twitter:data1]` to a `readingTime` range if `readingTime` is a tuple'
+    )
+
     st.end()
   })
 
@@ -782,7 +852,8 @@ test('rehypeMeta', (t) => {
             height: '550'
           },
           published: '2019-12-02T10:00:00.000Z',
-          modified: '2019-12-03T19:13:00.000Z'
+          modified: '2019-12-03T19:13:00.000Z',
+          readingTime: 11.1
         })
         .processSync('')
         .toString(),
@@ -818,6 +889,10 @@ test('rehypeMeta', (t) => {
         '<meta name="twitter:image:alt" content="M.T.A. map designed in 1979">',
         '<meta name="twitter:site" content="@nytimes">',
         '<meta name="twitter:creator" content="@jane">',
+        '<meta name="twitter:label1" content="Posted in">',
+        '<meta name="twitter:data1" content="New York">',
+        '<meta name="twitter:label2" content="Reading time">',
+        '<meta name="twitter:data2" content="12 minutes">',
         '</head>',
         ''
       ].join('\n'),
@@ -867,7 +942,8 @@ test('rehypeMeta', (t) => {
             height: '1012'
           },
           published: '2014-06-30T15:01:35-05:00',
-          modified: '2017-04-26T22:37:10-05:00'
+          modified: '2017-04-26T22:37:10-05:00',
+          readingTime: 3.083
         })
         .processSync('')
         .toString(),
@@ -907,6 +983,10 @@ test('rehypeMeta', (t) => {
         '<meta name="twitter:image" content="https://hostthetoast.com/wp-content/uploads/2014/06/Salt-and-Vinegar-Potatoes-6.jpg">',
         '<meta name="twitter:site" content="@hostthetoast">',
         '<meta name="twitter:creator" content="@jane">',
+        '<meta name="twitter:label1" content="Posted in">',
+        '<meta name="twitter:data1" content="Food">',
+        '<meta name="twitter:label2" content="Reading time">',
+        '<meta name="twitter:data2" content="4 minutes">',
         '</head>',
         '<body>',
         '<script src="index.js"></script>',
