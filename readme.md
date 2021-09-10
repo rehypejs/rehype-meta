@@ -182,6 +182,8 @@ be done by plugins:
     — Infer [`title`][c-title] from the document
 *   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
     — Infer [`description`][c-description] from the document
+*   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
+    — Infer [`readingTime`][c-readingtime] from the document
 
 ###### `config.og`
 
