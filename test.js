@@ -421,6 +421,46 @@ test('rehypeMeta', (t) => {
     st.equal(
       rehype()
         .data('settings', {fragment: true})
+        .use(rehypeMeta, {og: true, ogNameInTitle: true, title: 'About'})
+        .processSync('')
+        .toString(),
+      [
+        '<head>',
+        '<title>About</title>',
+        '<meta property="og:type" content="website">',
+        '<meta property="og:title" content="About">',
+        '</head>',
+        ''
+      ].join('\n'),
+      'should add a `meta[property=og:title]` if `og` is true, `ogNameInTitle` is true, and `title` is set'
+    )
+
+    st.equal(
+      rehype()
+        .data('settings', {fragment: true})
+        .use(rehypeMeta, {
+          og: true,
+          ogNameInTitle: true,
+          title: 'About',
+          name: 'Site'
+        })
+        .processSync('')
+        .toString(),
+      [
+        '<head>',
+        '<title>About - Site</title>',
+        '<meta property="og:type" content="website">',
+        '<meta property="og:site_name" content="Site">',
+        '<meta property="og:title" content="About - Site">',
+        '</head>',
+        ''
+      ].join('\n'),
+      'should add a `meta[property=og:title]` if `og` is true, `ogNameInTitle` is true, `title` is set, and `name` is set'
+    )
+
+    st.equal(
+      rehype()
+        .data('settings', {fragment: true})
         .use(rehypeMeta, {og: true, name: 'Example'})
         .processSync('')
         .toString(),

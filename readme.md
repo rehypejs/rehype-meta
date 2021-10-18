@@ -201,6 +201,13 @@ Affects: [`meta[property=og:site_name]`][m-og-site-name],
 [`meta[property=article:tag]`][m-article-tag],
 [`meta[name=twitter:card]`][m-twitter-card].
 
+###### `config.ogNameInTitle`
+
+Whether to add the site name `name` to the `og:title` (`boolean`, default:
+`false`).
+
+Affects: [`meta[property=og:title]`][m-og-title].
+
 ###### `config.twitter`
 
 Whether to add Twitter metadata (`boolean`, default: `false`).
@@ -251,7 +258,8 @@ Affects: [`link[rel=canonical]`][m-canonical],
 
 Name of the whole site (`string`, optional, example: `'The New York Times'`).
 
-Affects: [`title`][m-title], [`meta[property=og:site_name]`][m-og-site-name].
+Affects: [`title`][m-title], [`meta[property=og:site_name]`][m-og-site-name],
+[`meta[property=og:title]`][m-og-title].
 
 ###### `config.siteTags`
 
@@ -314,7 +322,7 @@ Affects: [`title`][m-title], [`meta[property=og:title]`][m-og-title].
 Value to use to join the `title` and `name` together (`string`, default:
 `' - '`).
 
-Affects: [`title`][m-title].
+Affects: [`title`][m-title], [`meta[property=og:title]`][m-og-title].
 
 ###### `config.description`
 
@@ -587,14 +595,29 @@ If `origin` is `'https://example.com'` and `path` is not set:
 
 ###### `meta[property=og:title]`
 
-Affected by: [`og`][c-og], [`title`][c-title].
+Affected by: [`og`][c-og], [`ogNameInTitle`][c-og-name-in-title],
+[`title`][c-title], [`name`][c-name], [`separator`][c-separator].
 
 If `og` is not `true`, `meta[property=og:title]` is not added.
 
 If `og` is `true` and `title` is `'About'`:
 
 ```html
-<meta property="og:title" content="title">
+<meta property="og:title" content="About">
+```
+
+If `og` is `true`, `ogNameInTitle` is `true`, `title` is `'About'`, and `name`
+is `'Site'`:
+
+```html
+<meta property="og:title" content="About - Site">
+```
+
+If `og` is `true`, `ogNameInTitle` is `true`, `title` is `'About'`, `name` is
+`'Site'`, and `separator` is `' | '`:
+
+```html
+<meta property="og:title" content="About | Site">
 ```
 
 ###### `meta[property=og:description]`
@@ -935,6 +958,8 @@ abide by its terms.
 [timestamp]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date#Timestamp_string
 
 [c-og]: #configog
+
+[c-og-name-in-title]: #configognameintitle
 
 [c-type]: #configtype
 

@@ -12,6 +12,9 @@
  * @typedef Options
  * @property {boolean} [og=false]
  *   Whether to add Open Graph metadata (`boolean`, default: `false`).
+ * @property {boolean} [ogNameInTitle=false]
+ *   Whether to add the site name `name` to the `og:title` (`boolean`,
+ *   default: `false`).
  * @property {boolean} [twitter=false]
  *   Whether to add Twitter metadata (`boolean`, default: `false`).
  * @property {boolean} [copyright=false]
@@ -105,6 +108,8 @@ import {fromSelector} from 'hast-util-from-selector'
 
 const fbBase = 'https://www.facebook.com/'
 
+const defaultSeparator = ' - '
+
 const generators = [
   title,
   canonical,
@@ -161,7 +166,10 @@ export default function meta(options) {
  * @param {Element} root
  */
 function title(data, root) {
-  const value = join([data.title, data.name], data.separator || ' - ')
+  const value = join(
+    [data.title, data.name],
+    data.separator || defaultSeparator
+  )
 
   if (data.title || data.name) {
     const node = ensure(data, root, 'title')
@@ -297,11 +305,15 @@ function ogUrl(data, root) {
  * @param {Element} root
  */
 function ogTitle(data, root) {
-  const value = data.og ? data.title : undefined
+  if (data.og) {
+    const value = data.ogNameInTitle
+      ? join([data.title, data.name], data.separator || defaultSeparator)
+      : data.title
 
-  if (value) {
-    const node = ensure(data, root, 'meta[property=og:title]')
-    node.properties.content = value
+    if (value) {
+      const node = ensure(data, root, 'meta[property=og:title]')
+      node.properties.content = value
+    }
   }
 }
 
