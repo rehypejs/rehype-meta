@@ -263,7 +263,7 @@ Affects: [`title`][m-title], [`meta[property=og:site_name]`][m-og-site-name],
 
 ###### `config.siteTags`
 
-Tags associated with the whole site (`Array.<string>`, optional, example:
+Tags associated with the whole site (`Array<string>`, optional, example:
 `['US Politics', 'Impeachment', 'NATO', 'London', 'Food', 'Poverty', 'Climate
 Change', 'Global Warming']`).
 
@@ -343,7 +343,7 @@ Affects: [`meta[property=article:section]`][m-article-section], [`meta[name=twit
 
 ###### `config.tags`
 
-Tags associated with the document (`Array.<string>`, optional, example:
+Tags associated with the document (`Array<string>`, optional, example:
 `['Subway', 'Map', 'Public Transit', 'Design', 'MTA', 'Massimo Vignelli',
 'NYC']`).
 
@@ -353,7 +353,7 @@ Affects: [`meta[name=keywords]`][m-keywords],
 ###### `config.image`
 
 One or more images associated with the document (`string`, `Image`, or
-`Array.<string | Image>`, optional).
+`Array<string|Image>`, optional).
 If strings are passed, they are seen as `Image` objects with a `url` field set
 to that value.
 

@@ -30,8 +30,8 @@
  * @property {string} [name]
  *   Name of the whole site (`string`, optional, example: `'The New York
  *   Times'`).
- * @property {string[]} [siteTags]
- *   Tags associated with the whole site (`Array.<string>`, optional, example:
+ * @property {Array<string>} [siteTags]
+ *   Tags associated with the whole site (`Array<string>`, optional, example:
  *   `['US Politics', 'Impeachment', 'NATO', 'London', 'Food', 'Poverty',
  *   'Climate Change', 'Global Warming']`).
  * @property {string} [siteAuthor]
@@ -65,13 +65,13 @@
  * @property {string} [section]
  *   Section associated with the document (`string`, optional, example: `'New
  *   York'`).
- * @property {string[]} [tags]
- *   Tags associated with the document (`Array.<string>`, optional, example:
+ * @property {Array<string>} [tags]
+ *   Tags associated with the document (`Array<string>`, optional, example:
  *   `['Subway', 'Map', 'Public Transit', 'Design', 'MTA', 'Massimo Vignelli',
  *   'NYC']`).
- * @property {string|string[]|Image|Image[]} [image]
+ * @property {string|Image|Array<string|Image>} [image]
  *   One or more images associated with the document (`string`, `Image`, or
- *   `Array.<string | Image>`, optional).
+ *   `Array<string|Image>`, optional).
  *   If strings are passed, they are seen as `Image` objects with a `url` field
  *   set to that value.
  *
@@ -137,7 +137,7 @@ const generators = [
 ]
 
 /**
- * @type {import('unified').Plugin<[Options] | void[], Root>}
+ * @type {import('unified').Plugin<[Options] | Array<void>, Root>}
  */
 export default function meta(options) {
   return (tree, file) => {
@@ -336,7 +336,7 @@ function ogDescription(data, root) {
  */
 function ogImage(data, root) {
   const images = data.og ? toImages(data.image).slice(0, 6) : []
-  /** @type {(keyof Image)[]} */
+  /** @type {Array<keyof Image>} */
   const keys = ['url', 'alt', 'width', 'height']
   let index = -1
 
@@ -465,7 +465,7 @@ function twitterCard(data, root) {
  */
 function twitterImage(data, root) {
   const image = data.twitter ? toImages(data.image)[0] : undefined
-  /** @type {(keyof Image)[]} */
+  /** @type {Array<keyof Image>} */
   const keys = ['url', 'alt']
   let index = -1
 
@@ -605,7 +605,7 @@ function url(data) {
 
 /**
  * @template Thing
- * @param {Thing[]} values
+ * @param {Array<Thing>} values
  * @param {string} separator
  * @returns {string}
  */
@@ -635,8 +635,8 @@ function toDate(d) {
 }
 
 /**
- * @param {string|string[]|Image|Image[]} [d]
- * @returns {Image[]}
+ * @param {string|Image|Array<string|Image>} [d]
+ * @returns {Array<Image>}
  */
 function toImages(d) {
   const values = d ? (Array.isArray(d) ? d : [d]) : []
