@@ -33,7 +33,7 @@
 ## What is this?
 
 This package is a [unified][] ([rehype][]) plugin to manage the metadata (Open
-Graph, Twitter Cards, other SEO things) that can be found in `<head>`.
+Graph, Twitter Cards, SEO, etc.) that can be found in `<head>`.
 It focusses on reasonable and useful metadata that is supported by several and
 popular vendors instead of every possible field supported somewhere.
 
@@ -1125,7 +1125,7 @@ integration.
 *   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
     — infer file metadata about how long the document takes to read
 *   [`rehype-document`][rehype-document]
-    — wrap a fragment in a document.
+    — wrap a fragment in a document
 *   [`rehype-format`](https://github.com/rehypejs/rehype-format)
     — format HTML
 *   [`rehype-minify`](https://github.com/rehypejs/rehype-minify)
