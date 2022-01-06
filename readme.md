@@ -8,101 +8,145 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**rehype**][rehype] plugin to add metadata (Open Graph, Twitter) to your head.
+**[rehype][]** plugin to add metadata to the `<head>`.
 
 ## Contents
 
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
     *   [`unified().use(rehypeMeta[, options])`](#unifieduserehypemeta-options)
     *   [`Config`](#config)
 *   [Metadata](#metadata)
+*   [Examples](#examples)
+    *   [Example: frontmatter in markdown](#example-frontmatter-in-markdown)
+    *   [Example: inferring metadata](#example-inferring-metadata)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
 *   [Security](#security)
 *   [Related](#related)
 *   [Contribute](#contribute)
 *   [License](#license)
 
+## What is this?
+
+This package is a [unified][] ([rehype][]) plugin to manage the metadata (Open
+Graph, Twitter Cards, SEO, etc.) that can be found in `<head>`.
+It focusses on reasonable and useful metadata that is supported by several and
+popular vendors instead of every possible field supported somewhere.
+
+**unified** is a project that transforms content with abstract syntax trees
+(ASTs).
+**rehype** adds support for HTML to unified.
+**hast** is the HTML AST that rehype uses.
+This is a rehype plugin that adds metadata to the head in the tree.
+
+## When should I use this?
+
+This plugin is particularly useful as a metadata manager when you’re working
+with articles that are supposed to be shared on the web, whether it’s on Twitter
+or Slack.
+You can define key/value pairs, either with frontmatter, with other plugins, or
+as options, and this plugin will generate the HTML used by different services.
+
+This plugin works on complete documents (not fragments).
+A different plugin, [`rehype-document`][rehype-document], wraps fragments in
+documents.
+
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
+In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 
 ```sh
 npm install rehype-meta
 ```
 
-## Use
-
-Say `example.js` looks as follows:
+In Deno with [Skypack][]:
 
 ```js
-import {reporter} from 'vfile-reporter'
+import rehypeMeta from 'https://cdn.skypack.dev/rehype-meta@3?dts'
+```
+
+In browsers with [Skypack][]:
+
+```html
+<script type="module">
+  import rehypeMeta from 'https://cdn.skypack.dev/rehype-meta@3?min'
+</script>
+```
+
+## Use
+
+Say our module `example.js` looks as follows:
+
+```js
 import {rehype} from 'rehype'
 import rehypeMeta from 'rehype-meta'
 
-rehype()
-  .data('settings', {fragment: true})
-  .use(rehypeMeta, {
-    twitter: true,
-    og: true,
-    copyright: true,
-    type: 'article',
-    origin: 'https://www.nytimes.com',
-    pathname: '/interactive/2019/12/02/nyregion/nyc-subway-map.html',
-    name: 'The New York Times',
-    siteTags: [
-      'US Politics',
-      'Impeachment',
-      'NATO',
-      'London',
-      'Food',
-      'Poverty',
-      'Climate Change',
-      'Global Warming'
-    ],
-    siteAuthor: 'The New York Times',
-    siteTwitter: '@nytimes',
-    author: 'Jane Doe',
-    authorTwitter: '@jane',
-    authorFacebook: 'janedoe',
-    title: 'The New York City Subway Map as You’ve Never Seen It Before',
-    separator: ' | ',
-    description:
-      'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
-    section: 'New York',
-    tags: [
-      'Subway',
-      'Map',
-      'Public Transit',
-      'Design',
-      'MTA',
-      'Massimo Vignelli',
-      'NYC'
-    ],
-    image: {
-      url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
-      alt: 'M.T.A. map designed in 1979',
-      width: '1050',
-      height: '550'
-    },
-    published: '2019-12-02T10:00:00.000Z',
-    modified: '2019-12-03T19:13:00.000Z',
-    readingTime: 11.1
-  })
-  .process('')
-  .then((file) => {
-    console.error(reporter(file))
-    console.log(String(file))
-  })
+main()
+
+async function main() {
+  const file = await rehype()
+    .data('settings', {fragment: true})
+    .use(rehypeMeta, {
+      twitter: true,
+      og: true,
+      copyright: true,
+      type: 'article',
+      origin: 'https://www.nytimes.com',
+      pathname: '/interactive/2019/12/02/nyregion/nyc-subway-map.html',
+      name: 'The New York Times',
+      siteTags: [
+        'US Politics',
+        'Impeachment',
+        'NATO',
+        'London',
+        'Food',
+        'Poverty',
+        'Climate Change',
+        'Global Warming'
+      ],
+      siteAuthor: 'The New York Times',
+      siteTwitter: '@nytimes',
+      author: 'Jane Doe',
+      authorTwitter: '@jane',
+      authorFacebook: 'janedoe',
+      title: 'The New York City Subway Map as You’ve Never Seen It Before',
+      separator: ' | ',
+      description:
+        'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
+      section: 'New York',
+      tags: [
+        'Subway',
+        'Map',
+        'Public Transit',
+        'Design',
+        'MTA',
+        'Massimo Vignelli',
+        'NYC'
+      ],
+      image: {
+        url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
+        alt: 'M.T.A. map designed in 1979',
+        width: '1050',
+        height: '550'
+      },
+      published: '2019-12-02T10:00:00.000Z',
+      modified: '2019-12-03T19:13:00.000Z',
+      readingTime: 11.1
+    })
+    .process('')
+
+  console.log(String(file))
+}
 ```
 
-Now, running `node example` yields:
+Now running `node example.js` yields:
 
 ```html
-no issues found
 <head>
 <title>The New York City Subway Map as You’ve Never Seen It Before | The New York Times</title>
 <link rel="canonical" href="https://www.nytimes.com/interactive/2019/12/02/nyregion/nyc-subway-map.html">
@@ -148,42 +192,43 @@ The default export is `rehypeMeta`.
 
 ### `unified().use(rehypeMeta[, options])`
 
-Add metadata to the head of a document.
-Adds a `<head>` if one doesn’t already exist.
-Overwrites metadata if found: for example, when a `<title>` already exists,
-updates it.
+Add metadata to the `<head>`.
+
+*   adds a `<head>` if one doesn’t already exist
+*   overwrites existing metadata in `<head>`
+    (for example, when a `<title>` already exists, it’s updated)
 
 ##### `options`
 
 Configuration with least priority.
+This is particularly useful for site wide metadata.
 Mixed into [config][].
 
 ### `Config`
 
 There are three ways to configure the metadata of a document.
 
-1.  Pass an object as `options` when [using `meta`][use]
+1.  pass an object as `options` when [using `meta`][use]
 2.  Define it in YAML front matter (by integrating with
-    [`vfile-matter`][matter])
+    [`vfile-matter`][vfile-matter])
 3.  Define an object at `file.data.meta`
 
 Configuration is created by extending the defaults, with these objects, in the
 above order (so `file.data.meta` takes precedence over `options`).
-Only `options` is enough if every file should have the same metadata.
-If your workflow enables front matter, `vfile-matter` is a good way to keep data
-in files.
+Only `options` is enough if every file has the same metadata.
+If your workflow enables front matter, that’s a good way to keep data in files.
 Alternatively, do it yourself by adding data at `file.data.meta`, which can also
 be done by plugins:
 
 *   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
-    — Infer [`modified`][c-modified], [`published`][c-published], and
+    — infer [`modified`][c-modified], [`published`][c-published], and
     [`author`][c-author] from Git
 *   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
-    — Infer [`title`][c-title] from the document
+    — infer [`title`][c-title] from the document
 *   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
-    — Infer [`description`][c-description] from the document
+    — infer [`description`][c-description] from the document
 *   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
-    — Infer [`readingTime`][c-readingtime] from the document
+    — infer [`readingTime`][c-readingtime] from the document
 
 ###### `config.og`
 
@@ -373,7 +418,7 @@ Affects: [`meta[property=og:image]`][m-og-image],
 Date the document (or site) was first published (`Date` or `string`, optional,
 example: `'2019-12-02T10:00:00.000Z'`).
 
-*Note*: parsing a string is [inconsistent][timestamp], prefer dates.
+> 👉 **Note**: parsing a string is [inconsistent][timestamp], prefer dates.
 
 Affects: [`meta[name=copyright]`][m-copyright],
 [`meta[property=article:published_time]`][m-article-published-time].
@@ -383,7 +428,7 @@ Affects: [`meta[name=copyright]`][m-copyright],
 Date the document was last modified (`Date` or `string`, optional, example:
 `'2019-12-03T19:13:00.000Z'`).
 
-*Note*: parsing a string is [inconsistent][timestamp], prefer dates.
+> 👉 **Note**: parsing a string is [inconsistent][timestamp], prefer dates.
 
 Affects: [`meta[property=article:modified_time]`][m-article-modified-time].
 
@@ -640,7 +685,7 @@ If `og` is not `true`, `meta[property=og:image]`, `meta[property=og:image:alt]`,
 `meta[property=og:image:width]`, and `meta[property=og:image:height]` are not
 added.
 
-*Note*: up to 6 images are added.
+> 👉 **Note**: up to 6 images are added.
 
 If `og` is `true` and `image` is `'https://example.com/image.png'`:
 
@@ -729,7 +774,7 @@ Affected by: [`og`][c-og], [`type`][c-type], [`tag`][c-tags].
 If `og` is not `true` or `type` is not `'article'`, `meta[property=article:tag]`
 are not added.
 
-*Note*: up to 6 tags are added.
+> 👉 **Note**: up to 6 tags are added.
 
 If `og` is `true`, `type` is `'article'`, and `tags` is `['US Politics',
 'Impeachment', 'NATO', 'London', 'Food', 'Poverty', 'Climate Change']`:
@@ -771,7 +816,7 @@ Affected by: [`twitter`][c-twitter], [`image`][c-image].
 If `twitter` is not `true`, `meta[name=twitter:image]` and
 `meta[name=twitter:image:alt]` are not added.
 
-*Note*: only one image is added.
+> 👉 **Note**: only one image is added.
 
 If `twitter` is `true` and `image` is `'https://example.com/image.png'`:
 
@@ -825,7 +870,7 @@ If `twitter` is `true` and `authorTwitter` is `'@example'`:
 Affected by: [`twitter`][c-twitter], [`section`][c-section],
 [`readingTime`][c-readingtime].
 
-*Note*: this data is used by Slack, not by Twitter.
+> 👉 **Note**: this data is used by Slack, not by Twitter.
 
 If `twitter` is not `true`, `meta[name=twitter:label1]` and
 `meta[name=twitter:data1]` are not added.
@@ -851,7 +896,7 @@ If `twitter` is `true`, `section` is not defined, and `readingTime` is `3.083`:
 Affected by: [`twitter`][c-twitter], [`section`][c-section],
 [`readingTime`][c-readingtime].
 
-*Note*: this data is used by Slack, not by Twitter.
+> 👉 **Note**: this data is used by Slack, not by Twitter.
 
 If `twitter` is not `true`, `section` is not defined, or `readingTime` is not
 defined, `meta[name=twitter:label2]` and `meta[name=twitter:data2]` are not
@@ -871,25 +916,220 @@ If `twitter` is `true`, `section` is defined, and `readingTime` is `[8, 12]`:
 <meta name="twitter:data2" content="8-12 minutes">
 ```
 
+## Examples
+
+### Example: frontmatter in markdown
+
+This example shows how it’s possible to combine the different data sources to
+pass site wide info as options and define more specific data from within
+markdown files with frontmatter.
+
+Say we have the following file `example.md`:
+
+```markdown
+---
+title: Neptune
+author: U. Le Verrier
+authorTwitter: '@leverrier123'
+description: Neptune is blue.
+tags:
+- neptune
+- blue
+---
+
+# Neptune
+
+To do: write some stuff about why neptune is cool.
+```
+
+And our module `example.js` looks as follows:
+
+```js
+import {matter} from 'vfile-matter'
+import {read} from 'to-vfile'
+import {unified} from 'unified'
+import remarkParse from 'remark-parse'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkRehype from 'remark-rehype'
+import rehypeDocument from 'rehype-document'
+import rehypeMeta from 'rehype-meta'
+import rehypeStringify from 'rehype-stringify'
+
+main()
+
+async function main() {
+  const file = await read('example.md')
+  // Define where the generated file will be available.
+  file.data.meta = {
+    origin: 'https://planets.com',
+    pathname: '/neptune/'
+  }
+
+  await unified()
+    .use(remarkParse)
+    .use(remarkFrontmatter)
+    .use(() => (_, file) => {
+      matter(file)
+    })
+    .use(remarkRehype)
+    // `rehype-document` manages non-metadata things in `<head>`.
+    .use(rehypeDocument, {
+      css: 'https://planets.com/index.css',
+      js: 'https://planets.com/index.js'
+    })
+    // Site wide metadata:
+    .use(rehypeMeta, {
+      og: true,
+      twitter: true,
+      copyright: true,
+      type: 'article',
+      name: 'Planets',
+      siteTags: ['planet', 'solar', 'galaxy'],
+      siteAuthor: 'J. Galle',
+      siteTwitter: '@the_planets'
+    })
+    .use(rehypeStringify)
+    .process(file)
+
+  console.log(String(file))
+}
+```
+
+Now, running `node example.js` yields:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Neptune - Planets</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://planets.com/index.css">
+<link rel="canonical" href="https://planets.com/neptune/">
+<meta name="description" content="Neptune is blue.">
+<meta name="keywords" content="neptune, blue, planet, solar, galaxy">
+<meta name="author" content="U. Le Verrier">
+<meta name="copyright" content="© 2022 U. Le Verrier">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Planets">
+<meta property="og:url" content="https://planets.com/neptune/">
+<meta property="og:title" content="Neptune">
+<meta property="og:description" content="Neptune is blue.">
+<meta property="article:tag" content="neptune">
+<meta property="article:tag" content="blue">
+<meta name="twitter:site" content="@the_planets">
+<meta name="twitter:creator" content="@leverrier123">
+</head>
+<body>
+<h1>Neptune</h1>
+<p>To do: write some stuff about why neptune is cool.</p>
+<script src="https://planets.com/index.js"></script>
+</body>
+</html>
+```
+
+### Example: inferring metadata
+
+Some metadata can be automatically gathered, either by extracting it from the
+document, or by accessing the file system or Git.
+This is done by other plugins (see [config][]) which “infer” that metadata and
+store their results on `file.data.meta`, which this plugin then looks at.
+
+Taking this readme as an example and running the following code within this
+repo:
+
+```js
+import {read} from 'to-vfile'
+import {unified} from 'unified'
+import unifiedInferGitMeta from 'unified-infer-git-meta'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeDocument from 'rehype-document'
+import rehypeInferTitleMeta from 'rehype-infer-title-meta'
+import rehypeInferDescriptionMeta from 'rehype-infer-description-meta'
+import rehypeInferReadingTimeMeta from 'rehype-infer-reading-time-meta'
+import rehypeMeta from 'rehype-meta'
+import rehypeStringify from 'rehype-stringify'
+
+main()
+
+async function main() {
+  const file = await unified()
+    .use(remarkParse)
+    .use(unifiedInferGitMeta) // Find published, modified, and authors in Git.
+    .use(remarkRehype)
+    .use(rehypeDocument)
+    .use(rehypeInferTitleMeta) // Find the main title.
+    .use(rehypeInferDescriptionMeta, {truncateSize: 64})  // Find the description.
+    .use(rehypeInferReadingTimeMeta) // Estimate reading time.
+    .use(rehypeMeta, {og: true, twitter: true, copyright: true})
+    .use(rehypeStringify)
+    .process(await read('readme.md'))
+
+  console.log(String(file))
+}
+```
+
+Yields:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rehype-meta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="rehype plugin to add metadata to the <head…">
+<meta name="author" content="Titus Wormer">
+<meta name="copyright" content="© 2019 Titus Wormer">
+<meta property="og:type" content="website">
+<meta property="og:title" content="rehype-meta">
+<meta property="og:description" content="rehype plugin to add metadata to the <head…">
+<meta name="twitter:label1" content="Reading time">
+<meta name="twitter:data1" content="16-25 minutes">
+</head>
+<body>
+<h1>rehype-meta</h1>
+…
+```
+
+## Types
+
+This package is fully typed with [TypeScript][].
+The extra types `Options` and `Image` are exported.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
+
+This plugin works with `rehype-parse` version 3+, `rehype-stringify` version 3+,
+`rehype` version 4+, and `unified` version 6+.
+
 ## Security
 
 Use of `rehype-meta` is relatively safe, however, it is possible for an attacker
-to define metadata from within a because of the [`matter`][matter] integration .
+to define metadata from within a because of the [`matter`][vfile-matter]
+integration.
 
 ## Related
 
 *   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
-    — Infer file metadata from Git
-*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
-    — Infer file metadata from the title of a document
+    — infer file metadata from Git
 *   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
-    — Infer file metadata from the description of a document
-*   [`rehype-document`](https://github.com/rehypejs/rehype-document)
-    — Wrap a document around the tree
+    — infer file metadata from the description of a document
+*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
+    — infer file metadata from the title of a document
+*   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
+    — infer file metadata about how long the document takes to read
+*   [`rehype-document`][rehype-document]
+    — wrap a fragment in a document
 *   [`rehype-format`](https://github.com/rehypejs/rehype-format)
-    — Format HTML
+    — format HTML
 *   [`rehype-minify`](https://github.com/rehypejs/rehype-minify)
-    — Minify HTML
+    — minify HTML
 
 ## Contribute
 
@@ -935,6 +1175,8 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[skypack]: https://www.skypack.dev
+
 [health]: https://github.com/rehypejs/.github
 
 [contributing]: https://github.com/rehypejs/.github/blob/HEAD/contributing.md
@@ -947,9 +1189,15 @@ abide by its terms.
 
 [author]: https://wooorm.com
 
+[typescript]: https://www.typescriptlang.org
+
+[unified]: https://github.com/unifiedjs/unified
+
 [rehype]: https://github.com/rehypejs/rehype
 
-[matter]: https://github.com/vfile/vfile-matter
+[rehype-document]: https://github.com/rehypejs/rehype-document
+
+[vfile-matter]: https://github.com/vfile/vfile-matter
 
 [config]: #config
 
