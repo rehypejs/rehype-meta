@@ -1009,7 +1009,7 @@ Now, running `node example.js` yields:
 <meta name="description" content="Neptune is blue.">
 <meta name="keywords" content="neptune, blue, planet, solar, galaxy">
 <meta name="author" content="U. Le Verrier">
-<meta name="copyright" content="© 2021 U. Le Verrier">
+<meta name="copyright" content="© 2022 U. Le Verrier">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Planets">
 <meta property="og:url" content="https://planets.com/neptune/">
