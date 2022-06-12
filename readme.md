@@ -1090,7 +1090,7 @@ The additional types `Options` and `Image` are exported.
 It also registers expected fields on `file.data.meta` and `file.data.matter`
 with `vfile`.
 If you’re working with the file, make sure to import this plugin somewhere in
-your types, as that registers the new field on the file.
+your types, as that registers the new fields on the file.
 
 ```js
 /**
