@@ -58,7 +58,7 @@ documents.
 ## Install
 
 This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
-In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
+In Node.js (version 12.20+, 14.14+, 16.0+, or 18.0+), install with [npm][]:
 
 ```sh
 npm install rehype-meta
@@ -86,65 +86,61 @@ Say our module `example.js` looks as follows:
 import {rehype} from 'rehype'
 import rehypeMeta from 'rehype-meta'
 
-main()
+const file = await rehype()
+  .data('settings', {fragment: true})
+  .use(rehypeMeta, {
+    twitter: true,
+    og: true,
+    copyright: true,
+    type: 'article',
+    origin: 'https://www.nytimes.com',
+    pathname: '/interactive/2019/12/02/nyregion/nyc-subway-map.html',
+    name: 'The New York Times',
+    siteTags: [
+      'US Politics',
+      'Impeachment',
+      'NATO',
+      'London',
+      'Food',
+      'Poverty',
+      'Climate Change',
+      'Global Warming'
+    ],
+    siteAuthor: 'The New York Times',
+    siteTwitter: '@nytimes',
+    author: 'Jane Doe',
+    authorTwitter: '@jane',
+    authorFacebook: 'janedoe',
+    title: 'The New York City Subway Map as You’ve Never Seen It Before',
+    separator: ' | ',
+    description:
+      'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
+    section: 'New York',
+    tags: [
+      'Subway',
+      'Map',
+      'Public Transit',
+      'Design',
+      'MTA',
+      'Massimo Vignelli',
+      'NYC'
+    ],
+    image: {
+      url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
+      alt: 'M.T.A. map designed in 1979',
+      width: '1050',
+      height: '550'
+    },
+    published: '2019-12-02T10:00:00.000Z',
+    modified: '2019-12-03T19:13:00.000Z',
+    readingTime: 11.1
+  })
+  .process('')
 
-async function main() {
-  const file = await rehype()
-    .data('settings', {fragment: true})
-    .use(rehypeMeta, {
-      twitter: true,
-      og: true,
-      copyright: true,
-      type: 'article',
-      origin: 'https://www.nytimes.com',
-      pathname: '/interactive/2019/12/02/nyregion/nyc-subway-map.html',
-      name: 'The New York Times',
-      siteTags: [
-        'US Politics',
-        'Impeachment',
-        'NATO',
-        'London',
-        'Food',
-        'Poverty',
-        'Climate Change',
-        'Global Warming'
-      ],
-      siteAuthor: 'The New York Times',
-      siteTwitter: '@nytimes',
-      author: 'Jane Doe',
-      authorTwitter: '@jane',
-      authorFacebook: 'janedoe',
-      title: 'The New York City Subway Map as You’ve Never Seen It Before',
-      separator: ' | ',
-      description:
-        'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
-      section: 'New York',
-      tags: [
-        'Subway',
-        'Map',
-        'Public Transit',
-        'Design',
-        'MTA',
-        'Massimo Vignelli',
-        'NYC'
-      ],
-      image: {
-        url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
-        alt: 'M.T.A. map designed in 1979',
-        width: '1050',
-        height: '550'
-      },
-      published: '2019-12-02T10:00:00.000Z',
-      modified: '2019-12-03T19:13:00.000Z',
-      readingTime: 11.1
-    })
-    .process('')
-
-  console.log(String(file))
-}
+console.log(String(file))
 ```
 
-Now running `node example.js` yields:
+…now running `node example.js` yields:
 
 ```html
 <head>
@@ -209,9 +205,9 @@ Mixed into [config][].
 There are three ways to configure the metadata of a document.
 
 1.  pass an object as `options` when [using `meta`][use]
-2.  Define it in YAML front matter (by integrating with
+2.  define it in YAML front matter (by integrating with
     [`vfile-matter`][vfile-matter])
-3.  Define an object at `file.data.meta`
+3.  define an object at `file.data.meta`
 
 Configuration is created by extending the defaults, with these objects, in the
 above order (so `file.data.meta` takes precedence over `options`).
@@ -955,47 +951,44 @@ import rehypeDocument from 'rehype-document'
 import rehypeMeta from 'rehype-meta'
 import rehypeStringify from 'rehype-stringify'
 
-main()
+const file = await read('example.md')
 
-async function main() {
-  const file = await read('example.md')
-  // Define where the generated file will be available.
-  file.data.meta = {
-    origin: 'https://planets.com',
-    pathname: '/neptune/'
-  }
-
-  await unified()
-    .use(remarkParse)
-    .use(remarkFrontmatter)
-    .use(() => (_, file) => {
-      matter(file)
-    })
-    .use(remarkRehype)
-    // `rehype-document` manages non-metadata things in `<head>`.
-    .use(rehypeDocument, {
-      css: 'https://planets.com/index.css',
-      js: 'https://planets.com/index.js'
-    })
-    // Site wide metadata:
-    .use(rehypeMeta, {
-      og: true,
-      twitter: true,
-      copyright: true,
-      type: 'article',
-      name: 'Planets',
-      siteTags: ['planet', 'solar', 'galaxy'],
-      siteAuthor: 'J. Galle',
-      siteTwitter: '@the_planets'
-    })
-    .use(rehypeStringify)
-    .process(file)
-
-  console.log(String(file))
+// Define where the generated file will be available.
+file.data.meta = {
+  origin: 'https://planets.com',
+  pathname: '/neptune/'
 }
+
+await unified()
+  .use(remarkParse)
+  .use(remarkFrontmatter)
+  .use(() => (_, file) => {
+    matter(file)
+  })
+  .use(remarkRehype)
+  // `rehype-document` manages non-metadata things in `<head>`.
+  .use(rehypeDocument, {
+    css: 'https://planets.com/index.css',
+    js: 'https://planets.com/index.js'
+  })
+  // Site wide metadata:
+  .use(rehypeMeta, {
+    og: true,
+    twitter: true,
+    copyright: true,
+    type: 'article',
+    name: 'Planets',
+    siteTags: ['planet', 'solar', 'galaxy'],
+    siteAuthor: 'J. Galle',
+    siteTwitter: '@the_planets'
+  })
+  .use(rehypeStringify)
+  .process(file)
+
+console.log(String(file))
 ```
 
-Now, running `node example.js` yields:
+…now running `node example.js` yields:
 
 ```html
 <!doctype html>
@@ -1051,23 +1044,19 @@ import rehypeInferReadingTimeMeta from 'rehype-infer-reading-time-meta'
 import rehypeMeta from 'rehype-meta'
 import rehypeStringify from 'rehype-stringify'
 
-main()
+const file = await unified()
+  .use(remarkParse)
+  .use(unifiedInferGitMeta) // Find published, modified, and authors in Git.
+  .use(remarkRehype)
+  .use(rehypeDocument)
+  .use(rehypeInferTitleMeta) // Find the main title.
+  .use(rehypeInferDescriptionMeta, {truncateSize: 64})  // Find the description.
+  .use(rehypeInferReadingTimeMeta) // Estimate reading time.
+  .use(rehypeMeta, {og: true, twitter: true, copyright: true})
+  .use(rehypeStringify)
+  .process(await read('readme.md'))
 
-async function main() {
-  const file = await unified()
-    .use(remarkParse)
-    .use(unifiedInferGitMeta) // Find published, modified, and authors in Git.
-    .use(remarkRehype)
-    .use(rehypeDocument)
-    .use(rehypeInferTitleMeta) // Find the main title.
-    .use(rehypeInferDescriptionMeta, {truncateSize: 64})  // Find the description.
-    .use(rehypeInferReadingTimeMeta) // Estimate reading time.
-    .use(rehypeMeta, {og: true, twitter: true, copyright: true})
-    .use(rehypeStringify)
-    .process(await read('readme.md'))
-
-  console.log(String(file))
-}
+console.log(String(file))
 ```
 
 Yields:
@@ -1096,13 +1085,30 @@ Yields:
 ## Types
 
 This package is fully typed with [TypeScript][].
-The extra types `Options` and `Image` are exported.
+The additional types `Options` and `Image` are exported.
+
+It also registers expected fields on `file.data.meta` and `file.data.matter`
+with `vfile`.
+If you’re working with the file, make sure to import this plugin somewhere in
+your types, as that registers the new field on the file.
+
+```js
+/**
+ * @typedef {import('rehype-meta')}
+ */
+
+import {VFile} from 'vfile'
+
+const file = new VFile()
+
+console.log(file.data.meta.title) //=> TS now knows that this is a `string?`.
+```
 
 ## Compatibility
 
 Projects maintained by the unified collective are compatible with all maintained
 versions of Node.js.
-As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
+As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
 Our projects sometimes work with older versions, but this is not guaranteed.
 
 This plugin works with `rehype-parse` version 3+, `rehype-stringify` version 3+,
@@ -1179,11 +1185,11 @@ abide by its terms.
 
 [health]: https://github.com/rehypejs/.github
 
-[contributing]: https://github.com/rehypejs/.github/blob/HEAD/contributing.md
+[contributing]: https://github.com/rehypejs/.github/blob/main/contributing.md
 
-[support]: https://github.com/rehypejs/.github/blob/HEAD/support.md
+[support]: https://github.com/rehypejs/.github/blob/main/support.md
 
-[coc]: https://github.com/rehypejs/.github/blob/HEAD/code-of-conduct.md
+[coc]: https://github.com/rehypejs/.github/blob/main/code-of-conduct.md
 
 [license]: license
 
