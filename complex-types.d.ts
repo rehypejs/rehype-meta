@@ -1,5 +1,6 @@
 import type {Image} from './lib/index.js'
 
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 declare module 'vfile' {
   interface DataMap {
     // Note: when changing `meta`, please copy/paste the changes into `matter` afterwards.
@@ -362,3 +363,4 @@ declare module 'vfile' {
     }
   }
 }
+/* eslint-enable @typescript-eslint/consistent-type-definitions */
