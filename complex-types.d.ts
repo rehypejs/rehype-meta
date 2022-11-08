@@ -152,7 +152,7 @@ declare module 'vfile' {
        *
        * Used by `rehype-meta`.
        */
-      tags?: string | Image | Array<string | Image>
+      images?: string | Image | Array<string | Image>
 
       /**
        * Date the document (or site) was first published.
