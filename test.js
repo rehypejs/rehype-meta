@@ -3,6 +3,8 @@ import {rehype} from 'rehype'
 import rehypeDocument from 'rehype-document'
 import rehypeMeta from './index.js'
 
+const currentYear = new Date().getFullYear()
+
 test('rehypeMeta', (t) => {
   t.test('basics', (st) => {
     st.equal(
@@ -165,7 +167,7 @@ test('rehypeMeta', (t) => {
       [
         '<head>',
         '<meta name="author" content="Jane X. Doe">',
-        '<meta name="copyright" content="© 2022 Jane X. Doe">',
+        '<meta name="copyright" content="© ' + currentYear + ' Jane X. Doe">',
         '</head>',
         ''
       ].join('\n'),
@@ -196,7 +198,7 @@ test('rehypeMeta', (t) => {
       [
         '<head>',
         '<meta name="author" content="Jane X. Doe">',
-        '<meta name="copyright" content="© 2022 Jane X. Doe">',
+        '<meta name="copyright" content="© ' + currentYear + ' Jane X. Doe">',
         '</head>',
         ''
       ].join('\n'),
