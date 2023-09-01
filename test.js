@@ -2,14 +2,14 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {rehype} from 'rehype'
 import rehypeDocument from 'rehype-document'
-import rehypeMeta from './index.js'
+import rehypeMeta from 'rehype-meta'
 
 const currentYear = new Date().getFullYear()
 
 test('rehypeMeta', async function (t) {
   await t.test('core', async function (t) {
     await t.test('should expose the public api', async function () {
-      assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
+      assert.deepEqual(Object.keys(await import('rehype-meta')).sort(), [
         'default'
       ])
     })
