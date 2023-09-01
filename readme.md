@@ -18,7 +18,8 @@
 *   [Use](#use)
 *   [API](#api)
     *   [`unified().use(rehypeMeta[, options])`](#unifieduserehypemeta-options)
-    *   [`Config`](#config)
+    *   [`Image`](#image)
+    *   [`Options`](#options)
 *   [Metadata](#metadata)
 *   [Examples](#examples)
     *   [Example: frontmatter in markdown](#example-frontmatter-in-markdown)
@@ -57,8 +58,8 @@ documents.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
-In Node.js (version 12.20+, 14.14+, 16.0+, or 18.0+), install with [npm][]:
+This package is [ESM only][esm].
+In Node.js (version 16+), install with [npm][]:
 
 ```sh
 npm install rehype-meta
@@ -89,13 +90,28 @@ import rehypeMeta from 'rehype-meta'
 const file = await rehype()
   .data('settings', {fragment: true})
   .use(rehypeMeta, {
-    twitter: true,
-    og: true,
+    author: 'Jane Doe',
+    authorFacebook: 'janedoe',
+    authorTwitter: '@jane',
     copyright: true,
-    type: 'article',
+    description:
+      'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
+    image: {
+      alt: 'M.T.A. map designed in 1979',
+      height: '550',
+      url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
+      width: '1050'
+    },
+    modified: '2019-12-03T19:13:00.000Z',
+    name: 'The New York Times',
+    og: true,
     origin: 'https://www.nytimes.com',
     pathname: '/interactive/2019/12/02/nyregion/nyc-subway-map.html',
-    name: 'The New York Times',
+    published: '2019-12-02T10:00:00.000Z',
+    readingTime: 11.1,
+    section: 'New York',
+    separator: ' | ',
+    siteAuthor: 'The New York Times',
     siteTags: [
       'US Politics',
       'Impeachment',
@@ -106,16 +122,7 @@ const file = await rehype()
       'Climate Change',
       'Global Warming'
     ],
-    siteAuthor: 'The New York Times',
     siteTwitter: '@nytimes',
-    author: 'Jane Doe',
-    authorTwitter: '@jane',
-    authorFacebook: 'janedoe',
-    title: 'The New York City Subway Map as You’ve Never Seen It Before',
-    separator: ' | ',
-    description:
-      'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
-    section: 'New York',
     tags: [
       'Subway',
       'Map',
@@ -125,15 +132,10 @@ const file = await rehype()
       'Massimo Vignelli',
       'NYC'
     ],
-    image: {
-      url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
-      alt: 'M.T.A. map designed in 1979',
-      width: '1050',
-      height: '550'
-    },
-    published: '2019-12-02T10:00:00.000Z',
-    modified: '2019-12-03T19:13:00.000Z',
-    readingTime: 11.1
+    title:
+      'The New York City Subway Map as You’ve Never Seen It Before',
+    twitter: true,
+    type: 'article'
   })
   .process('')
 
@@ -184,49 +186,148 @@ console.log(String(file))
 ## API
 
 This package exports no identifiers.
-The default export is `rehypeMeta`.
+The default export is [`rehypeMeta`][api-rehype-meta].
 
 ### `unified().use(rehypeMeta[, options])`
 
 Add metadata to the `<head>`.
 
+###### Parameters
+
+*   `options` ([`Options`][api-options], optional)
+    — configuration
+
+###### Returns
+
+Transform ([`Transformer`][unified-transformer]).
+
+##### Notes
+
+###### Algorithm
+
 *   adds a `<head>` if one doesn’t already exist
-*   overwrites existing metadata in `<head>`
-    (for example, when a `<title>` already exists, it’s updated)
+*   overwrites existing metadata in `<head>` (for example, when a `<title>`
+    already exists, it’s updated)
 
-##### `options`
-
-Configuration with least priority.
-This is particularly useful for site wide metadata.
-Mixed into [config][].
-
-### `Config`
+###### Config
 
 There are three ways to configure the metadata of a document.
 
-1.  pass an object as `options` when [using `meta`][use]
+1.  pass an object as `options` when [using `rehypeMeta`][api-rehype-meta]
 2.  define it in YAML front matter (by integrating with
     [`vfile-matter`][vfile-matter])
 3.  define an object at `file.data.meta`
 
 Configuration is created by extending the defaults, with these objects, in the
-above order (so `file.data.meta` takes precedence over `options`).
+above order (so `file.data.meta` is preferred over `options`).
 Only `options` is enough if every file has the same metadata.
 If your workflow enables front matter, that’s a good way to keep data in files.
 Alternatively, do it yourself by adding data at `file.data.meta`, which can also
 be done by plugins:
 
 *   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
-    — infer [`description`][c-description] from the document
+    — infer [`description`][o-description] from the document
 *   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
-    — infer [`readingTime`][c-readingtime] from the document
+    — infer [`readingTime`][o-reading-time] from the document
 *   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
-    — infer [`title`][c-title] from the document
+    — infer [`title`][o-title] from the document
 *   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
-    — infer [`author`][c-author], [`modified`][c-modified], and
-    [`published`][c-published] from Git
+    — infer [`author`][o-author], [`modified`][o-modified], and
+    [`published`][o-published] from Git
 
-###### `config.og`
+### `Image`
+
+Image metadata (TypeScript type).
+
+###### Fields
+
+*   `alt` (`string`, optional, example: `'M.T.A. map designed in 1979'`)
+    — alt text of image
+*   `height` (`number | string`, optional, example: `'550'`)
+    — height of image
+*   `url` (`string`, required, example:
+    `'https://static01.nyt.com/images/…/mta-crop-jumbo.jpg'`)
+    — URL of image
+*   `width` (`number | string`, optional, example: `'1050'`)
+    — width of image
+
+### `Options`
+
+Configuration (TypeScript type).
+
+##### Fields
+
+###### `author`
+
+Name of the author of the document (`string`, optional, example:
+`'Jane Doe'`).
+
+Affects: [`meta[name=author]`][m-author], [`meta[name=copyright]`][m-copyright].
+
+###### `authorFacebook`
+
+Facebook username of the author of the document (`string`, optional, example:
+`'example'`).
+
+Affects: [`meta[property=article:author]`][m-article-author].
+
+###### `authorTwitter`
+
+Twitter username of the author of the document (`string`, optional, example:
+`'@janedoe'`).
+
+Affects: [`meta[name=twitter:creator]`][m-twitter-creator].
+
+###### `color`
+
+Hexadecimal theme color of document or site (`string`, optional, example:
+`'#bada55'`).
+
+Affects: [`meta[name=theme-color]`][m-theme-color].
+
+###### `copyright`
+
+Whether to add copyright metadata (`boolean`, default: `false`).
+
+Affects: [`meta[name=copyright]`][m-copyright].
+
+###### `description`
+
+Description of the document (`string`, optional, example:
+`'The city has changed drastically over the past 40 years,
+yet the M.T.A. map designed in 1979 has largely endured.'`).
+
+Affects: [`meta[name=description]`][m-description],
+[`meta[property=og:description]`][m-og-description].
+
+###### `image`
+
+One or more images associated with the document
+(`Array<Image | string> | Image | string`, optional); if strings are
+passed, they are seen as `Image` objects with a `url` field set to that
+value.
+
+Affects: [`meta[property=og:image]`][m-og-image],
+[`meta[name=twitter:card]`][m-twitter-card],
+[`meta[name=twitter:image]`][m-twitter-image].
+
+###### `modified`
+
+Date the document was last modified (`Date` or `string`, optional, example:
+`'2019-12-03T19:13:00.000Z'`).
+
+> 👉 **Note**: parsing a string is [inconsistent][timestamp], prefer dates.
+
+Affects: [`meta[property=article:modified_time]`][m-article-modified-time].
+
+###### `name`
+
+Name of the whole site (`string`, optional, example: `'The New York Times'`).
+
+Affects: [`title`][m-title], [`meta[property=og:site_name]`][m-og-site-name],
+[`meta[property=og:title]`][m-og-title].
+
+###### `og`
 
 Whether to add Open Graph metadata (`boolean`, default: `false`).
 
@@ -242,14 +343,103 @@ Affects: [`meta[property=og:site_name]`][m-og-site-name],
 [`meta[property=article:tag]`][m-article-tag],
 [`meta[name=twitter:card]`][m-twitter-card].
 
-###### `config.ogNameInTitle`
+###### `ogNameInTitle`
 
 Whether to add the site name `name` to the `og:title` (`boolean`, default:
 `false`).
 
 Affects: [`meta[property=og:title]`][m-og-title].
 
-###### `config.twitter`
+###### `origin`
+
+Origin the file will be hosted on (`string`, optional, example:
+`https://www.nytimes.com`).
+
+Affects: [`link[rel=canonical]`][m-canonical],
+[`meta[property=og:url]`][m-og-url].
+
+###### `pathname`
+
+Absolute pathname of where the file will be hosted (`string`, default: `/`,
+example: `/interactive/2019/12/02/nyregion/nyc-subway-map.html`).
+
+Affects: [`link[rel=canonical]`][m-canonical],
+[`meta[property=og:url]`][m-og-url].
+
+###### `published`
+
+Date the document (or site) was first published (`Date` or `string`, optional,
+example: `'2019-12-02T10:00:00.000Z'`).
+
+> 👉 **Note**: parsing a string is [inconsistent][timestamp], prefer dates.
+
+Affects: [`meta[name=copyright]`][m-copyright],
+[`meta[property=article:published_time]`][m-article-published-time].
+
+###### `readingTime`
+
+Estimated reading time in minutes for the document (`[number, number]` or
+`number`, optional, example: `1.219403`).
+If two numbers are given, they represent a range of two estimates.
+
+Affects: [`meta[name=twitter:label1]`][m-twitter-label1],
+[`meta[name=twitter:data1]`][m-twitter-data1],
+[`meta[name=twitter:label2]`][m-twitter-label2],
+[`meta[name=twitter:data2]`][m-twitter-data2].
+
+###### `section`
+
+Section associated with the document (`string`, optional, example:
+`'New York'`).
+
+Affects: [`meta[property=article:section]`][m-article-section], [`meta[name=twitter:label1]`][m-twitter-label1],
+[`meta[name=twitter:data1]`][m-twitter-data1].
+
+###### `separator`
+
+Value to use to join the `title` and `name` together (`string`, default:
+`' - '`).
+
+Affects: [`title`][m-title], [`meta[property=og:title]`][m-og-title].
+
+###### `siteAuthor`
+
+Name of the author of the whole site (`string`, optional, example:
+`'The New York Times'`).
+
+Affects: [`meta[name=author]`][m-author], [`meta[name=copyright]`][m-copyright].
+
+###### `siteTags`
+
+Tags associated with the whole site (`Array<string>`, optional, example:
+`['US Politics', 'Impeachment', 'NATO', 'London', 'Food', 'Poverty', 'Climate
+Change', 'Global Warming']`).
+
+Affects: [`meta[name=keywords]`][m-keywords].
+
+###### `siteTwitter`
+
+Twitter username of the whole site (`string`, optional, example: `'@nytimes'`).
+
+Affects: [`meta[name=twitter:site]`][m-twitter-site].
+
+###### `tags`
+
+Tags associated with the document (`Array<string>`, optional, example:
+`['Subway', 'Map', 'Public Transit', 'Design', 'MTA', 'Massimo Vignelli',
+'NYC']`).
+
+Affects: [`meta[name=keywords]`][m-keywords],
+[`meta[property=article:tag]`][m-article-tag].
+
+###### `title`
+
+Title of the document (`string`, optional, example: `'The New York City Subway
+Map as You’ve Never Seen It Before'`).
+
+Affects: [`title`][m-title], [`meta[property=og:title]`][m-og-title].
+
+###### `twitter`
 
 Whether to add Twitter metadata (`boolean`, default: `false`).
 
@@ -262,15 +452,9 @@ Affects: [`meta[name=twitter:card]`][m-twitter-card],
 [`meta[name=twitter:label2]`][m-twitter-label2],
 [`meta[name=twitter:data2]`][m-twitter-data2].
 
-###### `config.copyright`
+###### `type`
 
-Whether to add copyright metadata (`boolean`, default: `false`).
-
-Affects: [`meta[name=copyright]`][m-copyright].
-
-###### `config.type`
-
-What the document refers to (`'website' | 'article'`, default: `website`).
+What the document refers to (`'article' | 'website'`, default: `'website'`).
 
 Affects: [`meta[property=og:type]`][m-og-type],
 [`meta[property=article:published_time]`][m-article-published-time],
@@ -279,201 +463,13 @@ Affects: [`meta[property=og:type]`][m-og-type],
 [`meta[property=article:section]`][m-article-section],
 [`meta[property=article:tag]`][m-article-tag].
 
-###### `config.origin`
-
-Origin the file will be hosted on (`string`, optional, example:
-`https://www.nytimes.com`).
-
-Affects: [`link[rel=canonical]`][m-canonical],
-[`meta[property=og:url]`][m-og-url].
-
-###### `config.pathname`
-
-Absolute pathname of where the file will be hosted (`string`, default: `/`,
-example: `/interactive/2019/12/02/nyregion/nyc-subway-map.html`).
-
-Affects: [`link[rel=canonical]`][m-canonical],
-[`meta[property=og:url]`][m-og-url].
-
-###### `config.name`
-
-Name of the whole site (`string`, optional, example: `'The New York Times'`).
-
-Affects: [`title`][m-title], [`meta[property=og:site_name]`][m-og-site-name],
-[`meta[property=og:title]`][m-og-title].
-
-###### `config.siteTags`
-
-Tags associated with the whole site (`Array<string>`, optional, example:
-`['US Politics', 'Impeachment', 'NATO', 'London', 'Food', 'Poverty', 'Climate
-Change', 'Global Warming']`).
-
-Affects: [`meta[name=keywords]`][m-keywords].
-
-###### `config.siteAuthor`
-
-Name of the author of the whole site (`string`, optional, example:
-`'The New York Times'`).
-
-Affects: [`meta[name=author]`][m-author], [`meta[name=copyright]`][m-copyright].
-
-###### `config.siteTwitter`
-
-Twitter username of the whole site (`string`, optional, example: `'@nytimes'`).
-
-Affects: [`meta[name=twitter:site]`][m-twitter-site].
-
-###### `config.color`
-
-Hexadecimal theme color of document or site (`string`, optional, example:
-`'#bada55'`).
-
-Affects: [`meta[name=theme-color]`][m-theme-color].
-
-###### `config.author`
-
-Name of the author of the document (`string`, optional, example:
-`'Jane Doe'`).
-
-Affects: [`meta[name=author]`][m-author], [`meta[name=copyright]`][m-copyright].
-
-###### `config.authorTwitter`
-
-Twitter username of the author of the document (`string`, optional, example:
-`'@janedoe'`).
-
-Affects: [`meta[name=twitter:creator]`][m-twitter-creator].
-
-###### `config.authorFacebook`
-
-Facebook username of the author of the document (`string`, optional, example:
-`'example'`).
-
-Affects: [`meta[property=article:author]`][m-article-author].
-
-###### `config.title`
-
-Title of the document (`string`, optional, example: `'The New York City Subway
-Map as You’ve Never Seen It Before'`).
-
-Affects: [`title`][m-title], [`meta[property=og:title]`][m-og-title].
-
-###### `config.separator`
-
-Value to use to join the `title` and `name` together (`string`, default:
-`' - '`).
-
-Affects: [`title`][m-title], [`meta[property=og:title]`][m-og-title].
-
-###### `config.description`
-
-Description of the document (`string`, optional, example:
-`'The city has changed drastically over the past 40 years,
-yet the M.T.A. map designed in 1979 has largely endured.'`).
-
-Affects: [`meta[name=description]`][m-description],
-[`meta[property=og:description]`][m-og-description].
-
-###### `config.section`
-
-Section associated with the document (`string`, optional, example:
-`'New York'`).
-
-Affects: [`meta[property=article:section]`][m-article-section], [`meta[name=twitter:label1]`][m-twitter-label1],
-[`meta[name=twitter:data1]`][m-twitter-data1].
-
-###### `config.tags`
-
-Tags associated with the document (`Array<string>`, optional, example:
-`['Subway', 'Map', 'Public Transit', 'Design', 'MTA', 'Massimo Vignelli',
-'NYC']`).
-
-Affects: [`meta[name=keywords]`][m-keywords],
-[`meta[property=article:tag]`][m-article-tag].
-
-###### `config.image`
-
-One or more images associated with the document (`string`, `Image`, or
-`Array<Image | string>`, optional).
-If strings are passed, they are seen as `Image` objects with a `url` field set
-to that value.
-
-`Image`:
-
-*   `url` (`string`, required, example: `'https://static01.nyt.com/images/…/mta-crop-jumbo.jpg'`)
-*   `alt` (`string`, optional, example: `'M.T.A. map designed in 1979'`)
-*   `width` (`string`, optional, example: `'1050'`)
-*   `height` (`string`, optional, example: `'550'`)
-
-Affects: [`meta[property=og:image]`][m-og-image],
-[`meta[name=twitter:card]`][m-twitter-card],
-[`meta[name=twitter:image]`][m-twitter-image].
-
-###### `config.published`
-
-Date the document (or site) was first published (`Date` or `string`, optional,
-example: `'2019-12-02T10:00:00.000Z'`).
-
-> 👉 **Note**: parsing a string is [inconsistent][timestamp], prefer dates.
-
-Affects: [`meta[name=copyright]`][m-copyright],
-[`meta[property=article:published_time]`][m-article-published-time].
-
-###### `config.modified`
-
-Date the document was last modified (`Date` or `string`, optional, example:
-`'2019-12-03T19:13:00.000Z'`).
-
-> 👉 **Note**: parsing a string is [inconsistent][timestamp], prefer dates.
-
-Affects: [`meta[property=article:modified_time]`][m-article-modified-time].
-
-###### `config.readingTime`
-
-Estimated reading time in minutes for the document (`[number, number]` or
-`number`, optional, example: `1.219403`).
-If two numbers are given, they represent a range of two estimates.
-
-Affects: [`meta[name=twitter:label1]`][m-twitter-label1],
-[`meta[name=twitter:data1]`][m-twitter-data1],
-[`meta[name=twitter:label2]`][m-twitter-label2],
-[`meta[name=twitter:data2]`][m-twitter-data2].
-
 ## Metadata
 
 The following metadata can be added by `rehype-meta`.
 
-###### `title`
-
-Affected by: [`title`][c-title], [`name`][c-name], [`separator`][c-separator].
-
-If `title` is `'About'`:
-
-```html
-<title>About</title>
-```
-
-If `name` is `'Example'`:
-
-```html
-<title>Example</title>
-```
-
-If `title` is `'About'` and `name` is `'Example'`:
-
-```html
-<title>About - Example</title>
-```
-
-If `title` is `'About'`, `name` is `'Example'`, and separator to `' | '`:
-
-```html
-<title>About | Example</title>
-```
-
 ###### `link[rel=canonical]`
 
-Affected by: [`origin`][c-origin], [`pathname`][c-pathname].
+Affected by: [`origin`][o-origin], [`pathname`][o-path-name].
 
 If `origin` is `'https://example.com'` and `path` is `'/path/'`:
 
@@ -487,41 +483,9 @@ If `origin` is `'https://example.com'` and `path` is not set:
 <link rel="canonical" href="https://example.com/">
 ```
 
-###### `meta[name=description]`
-
-Affected by: [`description`][c-description].
-
-If `description` is `'Lorem ipsum'`:
-
-```html
-<meta name="description" content="Lorem ipsum">
-```
-
-###### `meta[name=keywords]`
-
-Affected by: [`tags`][c-tags], [`siteTags`][c-sitetags].
-
-If `tags` is `['a', 'b']`:
-
-```html
-<meta name="keywords" content="a, b">
-```
-
-If `siteTags` is `['b', 'c']`:
-
-```html
-<meta name="keywords" content="b, c">
-```
-
-If `tags` is `['a', 'b']` and `siteTags` is `['b', 'c']`:
-
-```html
-<meta name="keywords" content="a, b, c">
-```
-
 ###### `meta[name=author]`
 
-Affected by: [`author`][c-author], [`siteAuthor`][c-siteauthor].
+Affected by: [`author`][o-author], [`siteAuthor`][o-site-author].
 
 If `author` is `'Jane'`:
 
@@ -543,8 +507,8 @@ If `author` is `'Jane'` and `siteAuthor` is `'John'`:
 
 ###### `meta[name=copyright]`
 
-Affected by: [`copyright`][c-copyright], [`author`][c-author],
-[`siteAuthor`][c-siteauthor], [`published`][c-published].
+Affected by: [`copyright`][o-copyright], [`author`][o-author],
+[`siteAuthor`][o-site-author], [`published`][o-published].
 
 The below examples depend on the current date, so for example purposes, say it
 was the year 2030.
@@ -575,9 +539,41 @@ If `copyright` is `true`, `author` is `'Jane'`, and `published` is `'2015'`:
 <meta name="copyright" content="© 2015 Jane">
 ```
 
+###### `meta[name=description]`
+
+Affected by: [`description`][o-description].
+
+If `description` is `'Lorem ipsum'`:
+
+```html
+<meta name="description" content="Lorem ipsum">
+```
+
+###### `meta[name=keywords]`
+
+Affected by: [`tags`][o-tags], [`siteTags`][o-site-tags].
+
+If `tags` is `['a', 'b']`:
+
+```html
+<meta name="keywords" content="a, b">
+```
+
+If `siteTags` is `['b', 'c']`:
+
+```html
+<meta name="keywords" content="b, c">
+```
+
+If `tags` is `['a', 'b']` and `siteTags` is `['b', 'c']`:
+
+```html
+<meta name="keywords" content="a, b, c">
+```
+
 ###### `meta[name=theme-color]`
 
-Affected by: [`color`][c-color].
+Affected by: [`color`][o-color].
 
 If `color` is `'#bada55'`:
 
@@ -585,85 +581,214 @@ If `color` is `'#bada55'`:
 <meta name="theme-color" content="#bada55">
 ```
 
-###### `meta[property=og:type]`
+###### `meta[name=twitter:card]`
 
-Affected by: [`og`][c-og], [`type`][c-type].
+Affected by: [`og`][o-og], [`twitter`][o-twitter], [`image`][o-image].
 
-If `og` is not `true`, `meta[property=og:type]` is not added.
+If `twitter` is not `true`, `meta[name=twitter:card]` is not added.
+If `twitter` is `true`, `og` is true, and there is no valid image, no
+`meta[name=twitter:card]` is added either, because Twitter assumes a summary in
+this case.
 
-If `og` is `true` and `type` is `'website'`:
+If `twitter` is `true` and there is a valid image:
 
 ```html
-<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 ```
 
-If `og` is `true` and `type` is `'article'`:
+If `twitter` is `true` and there is no valid image:
 
 ```html
-<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
 ```
 
-###### `meta[property=og:site_name]`
+###### `meta[name=twitter:creator]`
 
-Affected by: [`og`][c-og], [`name`][c-name].
+Affected by: [`twitter`][o-twitter], [`authorTwitter`][o-author-twitter].
 
-If `og` is not `true`, `meta[property=og:site_name]` is not added.
+If `twitter` is not `true`, `meta[name=twitter:creator]` is not added.
 
-If `og` is `true` and `name` is `'Example'`:
+If `twitter` is `true` and `authorTwitter` is `'@example'`:
 
 ```html
-<meta property="og:site_name" content="Example">
+<meta name="twitter:creator" content="@example">
 ```
 
-###### `meta[property=og:url]`
+###### `meta[name=twitter:data1]`
 
-Affected by: [`og`][c-og], [`origin`][c-origin], [`pathname`][c-pathname].
+###### `meta[name=twitter:label1]`
 
-If `og` is not `true`, `meta[property=og:url]` is not added.
+Affected by: [`twitter`][o-twitter], [`section`][o-section],
+[`readingTime`][o-reading-time].
 
-If `og` is `true`, `origin` is `'https://example.com'`, and `path` is
-`'/path/'`:
+> 👉 **Note**: this data is used by Slack, not by Twitter.
+
+If `twitter` is not `true`, `meta[name=twitter:label1]` and
+`meta[name=twitter:data1]` are not added.
+
+If `twitter` is `true` and `section` is `'Food'`:
 
 ```html
-<meta property="og:url" content="https://example.com/path/">
+<meta name="twitter:label1" content="Posted in">
+<meta name="twitter:data1" content="Food">
 ```
 
-If `origin` is `'https://example.com'` and `path` is not set:
+If `twitter` is `true`, `section` is not defined, and `readingTime` is `3.083`:
 
 ```html
-<meta property="og:url" content="https://example.com/">
+<meta name="twitter:label1" content="Reading time">
+<meta name="twitter:data1" content="4 minutes">
 ```
 
-###### `meta[property=og:title]`
+###### `meta[name=twitter:data2]`
 
-Affected by: [`og`][c-og], [`ogNameInTitle`][c-og-name-in-title],
-[`title`][c-title], [`name`][c-name], [`separator`][c-separator].
+###### `meta[name=twitter:label2]`
 
-If `og` is not `true`, `meta[property=og:title]` is not added.
+Affected by: [`twitter`][o-twitter], [`section`][o-section],
+[`readingTime`][o-reading-time].
 
-If `og` is `true` and `title` is `'About'`:
+> 👉 **Note**: this data is used by Slack, not by Twitter.
+
+If `twitter` is not `true`, `section` is not defined, or `readingTime` is not
+defined, `meta[name=twitter:label2]` and `meta[name=twitter:data2]` are not
+added.
+
+If `twitter` is `true`, `section` is defined, and `readingTime` is `0.8`:
 
 ```html
-<meta property="og:title" content="About">
+<meta name="twitter:label2" content="Reading time">
+<meta name="twitter:data2" content="1 minute">
 ```
 
-If `og` is `true`, `ogNameInTitle` is `true`, `title` is `'About'`, and `name`
-is `'Site'`:
+If `twitter` is `true`, `section` is defined, and `readingTime` is `[8, 12]`:
 
 ```html
-<meta property="og:title" content="About - Site">
+<meta name="twitter:label2" content="Reading time">
+<meta name="twitter:data2" content="8-12 minutes">
 ```
 
-If `og` is `true`, `ogNameInTitle` is `true`, `title` is `'About'`, `name` is
-`'Site'`, and `separator` is `' | '`:
+###### `meta[name=twitter:image]`
+
+Affected by: [`twitter`][o-twitter], [`image`][o-image].
+
+If `twitter` is not `true`, `meta[name=twitter:image]` and
+`meta[name=twitter:image:alt]` are not added.
+
+> 👉 **Note**: only one image is added.
+
+If `twitter` is `true` and `image` is `'https://example.com/image.png'`:
 
 ```html
-<meta property="og:title" content="About | Site">
+<meta name="twitter:image" content="https://example.com/image.png">
+```
+
+If `twitter` is `true` and `image` is `['https://example.com/a.png',
+'https://example.com/b.png']`:
+
+```html
+<meta name="twitter:image" content="https://example.com/a.png">
+```
+
+If `twitter` is `true` and `image` is `{url: 'https://example.com/a.png', alt:
+'A', width: '670', height: '1012'}`:
+
+```html
+<meta name="twitter:image" content="https://example.com/a.png">
+<meta name="twitter:image:alt" content="A">
+```
+
+###### `meta[name=twitter:site]`
+
+Affected by: [`twitter`][o-twitter], [`siteTwitter`][o-site-twitter].
+
+If `twitter` is not `true`, `meta[name=twitter:site]` is not added.
+
+If `twitter` is `true` and `siteTwitter` is `'@example'`:
+
+```html
+<meta name="twitter:site" content="@example">
+```
+
+###### `meta[property=article:author]`
+
+Affected by: [`og`][o-og], [`type`][o-type],
+[`authorFacebook`][o-author-facebook].
+
+If `og` is not `true` or `type` is not `'article'`,
+`meta[property=article:author]` is not added.
+
+If `og` is `true`, `type` is `'article'`, and `authorFacebook` is
+`'jane'`:
+
+```html
+<meta property="article:author" content="https://www.facebook.com/jane">
+```
+
+###### `meta[property=article:modified_time]`
+
+Affected by: [`og`][o-og], [`type`][o-type], [`modified`][o-modified].
+
+If `og` is not `true` or `type` is not `'article'`,
+`meta[property=article:modified_time]` is not added.
+
+If `og` is `true`, `type` is `'article'`, and `modified` is
+`'2017-04-26T22:37:10-05:00'`:
+
+```html
+<meta property="article:modified_time" content="2017-04-27T03:37:10.000Z">
+```
+
+###### `meta[property=article:published_time]`
+
+Affected by: [`og`][o-og], [`type`][o-type], [`published`][o-published].
+
+If `og` is not `true` or `type` is not `'article'`,
+`meta[property=article:published_time]` is not added.
+
+If `og` is `true`, `type` is `'article'`, and `published` is
+`'2014-06-30T15:01:35-05:00'`:
+
+```html
+<meta property="article:published_time" content="2014-06-30T20:01:35.000Z">
+```
+
+###### `meta[property=article:section]`
+
+Affected by: [`og`][o-og], [`type`][o-type], [`section`][o-section].
+
+If `og` is not `true` or `type` is not `'article'`,
+`meta[property=article:section]` is not added.
+
+If `og` is `true`, `type` is `'article'`, and `section` is `'Politics'`:
+
+```html
+<meta property="article:section" content="Politics">
+```
+
+###### `meta[property=article:tag]`
+
+Affected by: [`og`][o-og], [`type`][o-type], [`tag`][o-tags].
+
+If `og` is not `true` or `type` is not `'article'`, `meta[property=article:tag]`
+are not added.
+
+> 👉 **Note**: up to 6 tags are added.
+
+If `og` is `true`, `type` is `'article'`, and `tags` is `['US Politics',
+'Impeachment', 'NATO', 'London', 'Food', 'Poverty', 'Climate Change']`:
+
+```html
+<meta property="article:tag" content="US Politics">
+<meta property="article:tag" content="Impeachment">
+<meta property="article:tag" content="NATO">
+<meta property="article:tag" content="London">
+<meta property="article:tag" content="Food">
+<meta property="article:tag" content="Poverty">
 ```
 
 ###### `meta[property=og:description]`
 
-Affected by: [`og`][c-og], [`description`][c-description].
+Affected by: [`og`][o-og], [`description`][o-description].
 
 If `og` is not `true`, `meta[property=og:description]` is not added.
 
@@ -675,7 +800,7 @@ If `og` is `true` and `description` is `'Lorem ipsum'`:
 
 ###### `meta[property=og:image]`
 
-Affected by: [`og`][c-og], [`image`][c-image].
+Affected by: [`og`][o-og], [`image`][o-image].
 
 If `og` is not `true`, `meta[property=og:image]`, `meta[property=og:image:alt]`,
 `meta[property=og:image:width]`, and `meta[property=og:image:height]` are not
@@ -707,209 +832,108 @@ width: '670', height: '1012'}`:
 <meta property="og:image:height" content="1012">
 ```
 
-###### `meta[property=article:published_time]`
+###### `meta[property=og:site_name]`
 
-Affected by: [`og`][c-og], [`type`][c-type], [`published`][c-published].
+Affected by: [`og`][o-og], [`name`][o-name].
 
-If `og` is not `true` or `type` is not `'article'`,
-`meta[property=article:published_time]` is not added.
+If `og` is not `true`, `meta[property=og:site_name]` is not added.
 
-If `og` is `true`, `type` is `'article'`, and `published` is
-`'2014-06-30T15:01:35-05:00'`:
+If `og` is `true` and `name` is `'Example'`:
 
 ```html
-<meta property="article:published_time" content="2014-06-30T20:01:35.000Z">
+<meta property="og:site_name" content="Example">
 ```
 
-###### `meta[property=article:modified_time]`
+###### `meta[property=og:title]`
 
-Affected by: [`og`][c-og], [`type`][c-type], [`modified`][c-modified].
+Affected by: [`og`][o-og], [`ogNameInTitle`][o-og-name-in-title],
+[`title`][o-title], [`name`][o-name], [`separator`][o-separator].
 
-If `og` is not `true` or `type` is not `'article'`,
-`meta[property=article:modified_time]` is not added.
+If `og` is not `true`, `meta[property=og:title]` is not added.
 
-If `og` is `true`, `type` is `'article'`, and `modified` is
-`'2017-04-26T22:37:10-05:00'`:
+If `og` is `true` and `title` is `'About'`:
 
 ```html
-<meta property="article:modified_time" content="2017-04-27T03:37:10.000Z">
+<meta property="og:title" content="About">
 ```
 
-###### `meta[property=article:author]`
-
-Affected by: [`og`][c-og], [`type`][c-type],
-[`authorFacebook`][c-authorfacebook].
-
-If `og` is not `true` or `type` is not `'article'`,
-`meta[property=article:author]` is not added.
-
-If `og` is `true`, `type` is `'article'`, and `authorFacebook` is
-`'jane'`:
+If `og` is `true`, `ogNameInTitle` is `true`, `title` is `'About'`, and `name`
+is `'Site'`:
 
 ```html
-<meta property="article:author" content="https://www.facebook.com/jane">
+<meta property="og:title" content="About - Site">
 ```
 
-###### `meta[property=article:section]`
-
-Affected by: [`og`][c-og], [`type`][c-type], [`section`][c-section].
-
-If `og` is not `true` or `type` is not `'article'`,
-`meta[property=article:section]` is not added.
-
-If `og` is `true`, `type` is `'article'`, and `section` is `'Politics'`:
+If `og` is `true`, `ogNameInTitle` is `true`, `title` is `'About'`, `name` is
+`'Site'`, and `separator` is `' | '`:
 
 ```html
-<meta property="article:section" content="Politics">
+<meta property="og:title" content="About | Site">
 ```
 
-###### `meta[property=article:tag]`
+###### `meta[property=og:type]`
 
-Affected by: [`og`][c-og], [`type`][c-type], [`tag`][c-tags].
+Affected by: [`og`][o-og], [`type`][o-type].
 
-If `og` is not `true` or `type` is not `'article'`, `meta[property=article:tag]`
-are not added.
+If `og` is not `true`, `meta[property=og:type]` is not added.
 
-> 👉 **Note**: up to 6 tags are added.
-
-If `og` is `true`, `type` is `'article'`, and `tags` is `['US Politics',
-'Impeachment', 'NATO', 'London', 'Food', 'Poverty', 'Climate Change']`:
+If `og` is `true` and `type` is `'website'`:
 
 ```html
-<meta property="article:tag" content="US Politics">
-<meta property="article:tag" content="Impeachment">
-<meta property="article:tag" content="NATO">
-<meta property="article:tag" content="London">
-<meta property="article:tag" content="Food">
-<meta property="article:tag" content="Poverty">
+<meta property="og:type" content="website">
 ```
 
-###### `meta[name=twitter:card]`
-
-Affected by: [`og`][c-og], [`twitter`][c-twitter], [`image`][c-image].
-
-If `twitter` is not `true`, `meta[name=twitter:card]` is not added.
-If `twitter` is `true`, `og` is true, and there is no valid image, no
-`meta[name=twitter:card]` is added either, because Twitter assumes a summary in
-this case.
-
-If `twitter` is `true` and there is a valid image:
+If `og` is `true` and `type` is `'article'`:
 
 ```html
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="article">
 ```
 
-If `twitter` is `true` and there is no valid image:
+###### `meta[property=og:url]`
+
+Affected by: [`og`][o-og], [`origin`][o-origin], [`pathname`][o-path-name].
+
+If `og` is not `true`, `meta[property=og:url]` is not added.
+
+If `og` is `true`, `origin` is `'https://example.com'`, and `path` is
+`'/path/'`:
 
 ```html
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="https://example.com/path/">
 ```
 
-###### `meta[name=twitter:image]`
-
-Affected by: [`twitter`][c-twitter], [`image`][c-image].
-
-If `twitter` is not `true`, `meta[name=twitter:image]` and
-`meta[name=twitter:image:alt]` are not added.
-
-> 👉 **Note**: only one image is added.
-
-If `twitter` is `true` and `image` is `'https://example.com/image.png'`:
+If `origin` is `'https://example.com'` and `path` is not set:
 
 ```html
-<meta name="twitter:image" content="https://example.com/image.png">
+<meta property="og:url" content="https://example.com/">
 ```
 
-If `twitter` is `true` and `image` is `['https://example.com/a.png',
-'https://example.com/b.png']`:
+###### `title`
+
+Affected by: [`title`][o-title], [`name`][o-name], [`separator`][o-separator].
+
+If `title` is `'About'`:
 
 ```html
-<meta name="twitter:image" content="https://example.com/a.png">
+<title>About</title>
 ```
 
-If `twitter` is `true` and `image` is `{url: 'https://example.com/a.png', alt:
-'A', width: '670', height: '1012'}`:
+If `name` is `'Example'`:
 
 ```html
-<meta name="twitter:image" content="https://example.com/a.png">
-<meta name="twitter:image:alt" content="A">
+<title>Example</title>
 ```
 
-###### `meta[name=twitter:site]`
-
-Affected by: [`twitter`][c-twitter], [`siteTwitter`][c-sitetwitter].
-
-If `twitter` is not `true`, `meta[name=twitter:site]` is not added.
-
-If `twitter` is `true` and `siteTwitter` is `'@example'`:
+If `title` is `'About'` and `name` is `'Example'`:
 
 ```html
-<meta name="twitter:site" content="@example">
+<title>About - Example</title>
 ```
 
-###### `meta[name=twitter:creator]`
-
-Affected by: [`twitter`][c-twitter], [`authorTwitter`][c-authortwitter].
-
-If `twitter` is not `true`, `meta[name=twitter:creator]` is not added.
-
-If `twitter` is `true` and `authorTwitter` is `'@example'`:
+If `title` is `'About'`, `name` is `'Example'`, and separator to `' | '`:
 
 ```html
-<meta name="twitter:creator" content="@example">
-```
-
-###### `meta[name=twitter:label1]`
-
-###### `meta[name=twitter:data1]`
-
-Affected by: [`twitter`][c-twitter], [`section`][c-section],
-[`readingTime`][c-readingtime].
-
-> 👉 **Note**: this data is used by Slack, not by Twitter.
-
-If `twitter` is not `true`, `meta[name=twitter:label1]` and
-`meta[name=twitter:data1]` are not added.
-
-If `twitter` is `true` and `section` is `'Food'`:
-
-```html
-<meta name="twitter:label1" content="Posted in">
-<meta name="twitter:data1" content="Food">
-```
-
-If `twitter` is `true`, `section` is not defined, and `readingTime` is `3.083`:
-
-```html
-<meta name="twitter:label1" content="Reading time">
-<meta name="twitter:data1" content="4 minutes">
-```
-
-###### `meta[name=twitter:label2]`
-
-###### `meta[name=twitter:data2]`
-
-Affected by: [`twitter`][c-twitter], [`section`][c-section],
-[`readingTime`][c-readingtime].
-
-> 👉 **Note**: this data is used by Slack, not by Twitter.
-
-If `twitter` is not `true`, `section` is not defined, or `readingTime` is not
-defined, `meta[name=twitter:label2]` and `meta[name=twitter:data2]` are not
-added.
-
-If `twitter` is `true`, `section` is defined, and `readingTime` is `0.8`:
-
-```html
-<meta name="twitter:label2" content="Reading time">
-<meta name="twitter:data2" content="1 minute">
-```
-
-If `twitter` is `true`, `section` is defined, and `readingTime` is `[8, 12]`:
-
-```html
-<meta name="twitter:label2" content="Reading time">
-<meta name="twitter:data2" content="8-12 minutes">
+<title>About | Example</title>
 ```
 
 ## Examples
@@ -938,18 +962,18 @@ tags:
 To do: write some stuff about why neptune is cool.
 ```
 
-And our module `example.js` looks as follows:
+…and a module `example.js`:
 
 ```js
-import {matter} from 'vfile-matter'
-import {read} from 'to-vfile'
-import {unified} from 'unified'
-import remarkParse from 'remark-parse'
 import remarkFrontmatter from 'remark-frontmatter'
+import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeDocument from 'rehype-document'
 import rehypeMeta from 'rehype-meta'
 import rehypeStringify from 'rehype-stringify'
+import {read} from 'to-vfile'
+import {unified} from 'unified'
+import {matter} from 'vfile-matter'
 
 const file = await read('example.md')
 
@@ -975,14 +999,14 @@ await unified()
   })
   // Site wide metadata:
   .use(rehypeMeta, {
-    og: true,
-    twitter: true,
     copyright: true,
-    type: 'article',
     name: 'Planets',
-    siteTags: ['planet', 'solar', 'galaxy'],
+    og: true,
     siteAuthor: 'J. Galle',
-    siteTwitter: '@the_planets'
+    siteTags: ['planet', 'solar', 'galaxy'],
+    siteTwitter: '@the_planets',
+    twitter: true,
+    type: 'article'
   })
   .use(rehypeStringify)
   .process(file)
@@ -998,13 +1022,13 @@ console.log(String(file))
 <head>
 <meta charset="utf-8">
 <title>Neptune - Planets</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://planets.com/index.css">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link href="https://planets.com/index.css" rel="stylesheet">
 <link rel="canonical" href="https://planets.com/neptune/">
 <meta name="description" content="Neptune is blue.">
 <meta name="keywords" content="neptune, blue, planet, solar, galaxy">
 <meta name="author" content="U. Le Verrier">
-<meta name="copyright" content="© 2022 U. Le Verrier">
+<meta name="copyright" content="© 2023 U. Le Verrier">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Planets">
 <meta property="og:url" content="https://planets.com/neptune/">
@@ -1034,9 +1058,6 @@ Taking this readme as an example and running the following code within this
 repo:
 
 ```js
-import {read} from 'to-vfile'
-import {unified} from 'unified'
-import unifiedInferGitMeta from 'unified-infer-git-meta'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeDocument from 'rehype-document'
@@ -1045,6 +1066,9 @@ import rehypeInferDescriptionMeta from 'rehype-infer-description-meta'
 import rehypeInferReadingTimeMeta from 'rehype-infer-reading-time-meta'
 import rehypeMeta from 'rehype-meta'
 import rehypeStringify from 'rehype-stringify'
+import {read} from 'to-vfile'
+import {unified} from 'unified'
+import unifiedInferGitMeta from 'unified-infer-git-meta'
 
 const file = await unified()
   .use(remarkParse)
@@ -1052,7 +1076,7 @@ const file = await unified()
   .use(remarkRehype)
   .use(rehypeDocument)
   .use(rehypeInferTitleMeta) // Find the main title.
-  .use(rehypeInferDescriptionMeta, {truncateSize: 64})  // Find the description.
+  .use(rehypeInferDescriptionMeta, {truncateSize: 64}) // Find the description.
   .use(rehypeInferReadingTimeMeta) // Estimate reading time.
   .use(rehypeMeta, {og: true, twitter: true, copyright: true})
   .use(rehypeStringify)
@@ -1069,7 +1093,7 @@ Yields:
 <head>
 <meta charset="utf-8">
 <title>rehype-meta</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <meta name="description" content="rehype plugin to add metadata to the <head…">
 <meta name="author" content="Titus Wormer">
 <meta name="copyright" content="© 2019 Titus Wormer">
@@ -1087,7 +1111,8 @@ Yields:
 ## Types
 
 This package is fully typed with [TypeScript][].
-The additional types `Options` and `Image` are exported.
+It exports the additional types [`Image`][api-image] and
+[`Options`][api-options].
 
 It also registers expected fields on `file.data.meta` and `file.data.matter`
 with `vfile`.
@@ -1108,10 +1133,13 @@ console.log(file.data.meta.title) //=> TS now knows that this is a `string?`.
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line, `rehype-meta@^3`, compatible
+with Node.js 12.
 
 This plugin works with `rehype-parse` version 3+, `rehype-stringify` version 3+,
 `rehype` version 4+, and `unified` version 6+.
@@ -1167,9 +1195,9 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/rehype-meta
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/rehype-meta.svg
+[size-badge]: https://img.shields.io/bundlejs/size/rehype-meta
 
-[size]: https://bundlephobia.com/result?p=rehype-meta
+[size]: https://bundlejs.com/?q=rehype-meta
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -1182,6 +1210,8 @@ abide by its terms.
 [chat]: https://github.com/rehypejs/rehype/discussions
 
 [npm]: https://docs.npmjs.com/cli/install
+
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
 [esmsh]: https://esm.sh
 
@@ -1197,118 +1227,124 @@ abide by its terms.
 
 [author]: https://wooorm.com
 
-[typescript]: https://www.typescriptlang.org
-
-[unified]: https://github.com/unifiedjs/unified
-
 [rehype]: https://github.com/rehypejs/rehype
 
 [rehype-document]: https://github.com/rehypejs/rehype-document
 
+[typescript]: https://www.typescriptlang.org
+
+[unified]: https://github.com/unifiedjs/unified
+
+[unified-transformer]: https://github.com/unifiedjs/unified#transformer
+
 [vfile-matter]: https://github.com/vfile/vfile-matter
-
-[config]: #config
-
-[use]: #unifieduserehypemeta-options
 
 [timestamp]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date#Timestamp_string
 
-[c-og]: #configog
+[config]: #config
 
-[c-og-name-in-title]: #configognameintitle
+[api-image]: #image
 
-[c-type]: #configtype
+[api-options]: #options
 
-[c-twitter]: #configtwitter
+[api-rehype-meta]: #unifieduserehypemeta-options
 
-[c-copyright]: #configcopyright
-
-[c-origin]: #configorigin
-
-[c-pathname]: #configpathname
-
-[c-name]: #configname
-
-[c-sitetags]: #configsitetags
-
-[c-siteauthor]: #configsiteauthor
-
-[c-sitetwitter]: #configsitetwitter
-
-[c-color]: #configcolor
-
-[c-author]: #configauthor
-
-[c-authortwitter]: #configauthortwitter
-
-[c-authorfacebook]: #configauthorfacebook
-
-[c-title]: #configtitle
-
-[c-separator]: #configseparator
-
-[c-description]: #configdescription
-
-[c-section]: #configsection
-
-[c-tags]: #configtags
-
-[c-image]: #configimage
-
-[c-published]: #configpublished
-
-[c-modified]: #configmodified
-
-[c-readingtime]: #configreadingtime
-
-[m-title]: #title
-
-[m-canonical]: #linkrelcanonical
-
-[m-description]: #metanamedescription
-
-[m-keywords]: #metanamekeywords
-
-[m-author]: #metanameauthor
-
-[m-copyright]: #metanamecopyright
-
-[m-theme-color]: #metanametheme-color
-
-[m-og-type]: #metapropertyogtype
-
-[m-og-site-name]: #metapropertyogsite_name
-
-[m-og-url]: #metapropertyogurl
-
-[m-og-title]: #metapropertyogtitle
-
-[m-og-description]: #metapropertyogdescription
-
-[m-og-image]: #metapropertyogimage
-
-[m-article-published-time]: #metapropertyarticlepublished_time
+[m-article-author]: #metapropertyarticleauthor
 
 [m-article-modified-time]: #metapropertyarticlemodified_time
 
-[m-article-author]: #metapropertyarticleauthor
+[m-article-published-time]: #metapropertyarticlepublished_time
 
 [m-article-section]: #metapropertyarticlesection
 
 [m-article-tag]: #metapropertyarticletag
 
+[m-author]: #metanameauthor
+
+[m-canonical]: #linkrelcanonical
+
+[m-copyright]: #metanamecopyright
+
+[m-description]: #metanamedescription
+
+[m-keywords]: #metanamekeywords
+
+[m-og-description]: #metapropertyogdescription
+
+[m-og-image]: #metapropertyogimage
+
+[m-og-site-name]: #metapropertyogsite_name
+
+[m-og-title]: #metapropertyogtitle
+
+[m-og-type]: #metapropertyogtype
+
+[m-og-url]: #metapropertyogurl
+
+[m-title]: #title-1
+
+[m-theme-color]: #metanametheme-color
+
 [m-twitter-card]: #metanametwittercard
-
-[m-twitter-image]: #metanametwitterimage
-
-[m-twitter-site]: #metanametwittersite
 
 [m-twitter-creator]: #metanametwittercreator
 
-[m-twitter-label1]: #metanametwitterlabel1
-
 [m-twitter-data1]: #metanametwitterdata1
+
+[m-twitter-data2]: #metanametwitterdata2
+
+[m-twitter-image]: #metanametwitterimage
+
+[m-twitter-label1]: #metanametwitterlabel1
 
 [m-twitter-label2]: #metanametwitterlabel2
 
-[m-twitter-data2]: #metanametwitterdata2
+[m-twitter-site]: #metanametwittersite
+
+[o-author]: #author
+
+[o-author-facebook]: #authorfacebook
+
+[o-author-twitter]: #authortwitter
+
+[o-color]: #color
+
+[o-copyright]: #copyright
+
+[o-description]: #description
+
+[o-image]: #image-1
+
+[o-modified]: #modified
+
+[o-name]: #name
+
+[o-og]: #og
+
+[o-og-name-in-title]: #ognameintitle
+
+[o-origin]: #origin
+
+[o-path-name]: #pathname
+
+[o-published]: #published
+
+[o-reading-time]: #readingtime
+
+[o-section]: #section
+
+[o-separator]: #separator
+
+[o-site-author]: #siteauthor
+
+[o-site-tags]: #sitetags
+
+[o-site-twitter]: #sitetwitter
+
+[o-tags]: #tags
+
+[o-title]: #title
+
+[o-twitter]: #twitter
+
+[o-type]: #type

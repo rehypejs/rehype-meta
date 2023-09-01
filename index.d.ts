@@ -9,7 +9,7 @@ export interface Image {
    */
   alt?: string | null | undefined
   /**
-   * Height of image (optional, example: '550').
+   * Height of image (optional, example: `'550'`).
    */
   height?: number | string | null | undefined
   /**
@@ -18,7 +18,7 @@ export interface Image {
    */
   url: string
   /**
-   * Width of image (optional, example: '1050').
+   * Width of image (optional, example: `'1050'`).
    */
   width?: number | string | null | undefined
 }
@@ -227,6 +227,7 @@ export interface Options {
   type?: 'article' | 'website' | null | undefined
 }
 
+// Add custom data supported when `rehype-meta` is added.
 declare module 'vfile' {
   interface DataMapMatter extends Options {}
   interface DataMapMeta extends Options {}

@@ -1057,12 +1057,12 @@ test('rehypeMeta', async function (t) {
             authorTwitter: '@jane',
             copyright: true,
             description:
-              'The city has changed drastically over the past 40 years, yet the M.assert.A. map designed in 1979 has largely endured.',
+              'The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.',
             image: {
+              alt: 'M.T.A. map designed in 1979',
+              height: '550',
               url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
-              alt: 'M.assert.A. map designed in 1979',
-              width: '1050',
-              height: '550'
+              width: '1050'
             },
             modified: '2019-12-03T19:13:00.000Z',
             name: 'The New York Times',
@@ -1105,7 +1105,7 @@ test('rehypeMeta', async function (t) {
           '<head>',
           '<title>The New York City Subway Map as You’ve Never Seen It Before | The New York Times</title>',
           '<link rel="canonical" href="https://www.nytimes.com/interactive/2019/12/02/nyregion/nyc-subway-map.html">',
-          '<meta name="description" content="The city has changed drastically over the past 40 years, yet the M.assert.A. map designed in 1979 has largely endured.">',
+          '<meta name="description" content="The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.">',
           '<meta name="keywords" content="Subway, Map, Public Transit, Design, MTA, Massimo Vignelli, NYC, US Politics, Impeachment, NATO, London, Food, Poverty, Climate Change, Global Warming">',
           '<meta name="author" content="Jane Doe">',
           '<meta name="copyright" content="© 2019 Jane Doe">',
@@ -1113,9 +1113,9 @@ test('rehypeMeta', async function (t) {
           '<meta property="og:site_name" content="The New York Times">',
           '<meta property="og:url" content="https://www.nytimes.com/interactive/2019/12/02/nyregion/nyc-subway-map.html">',
           '<meta property="og:title" content="The New York City Subway Map as You’ve Never Seen It Before">',
-          '<meta property="og:description" content="The city has changed drastically over the past 40 years, yet the M.assert.A. map designed in 1979 has largely endured.">',
+          '<meta property="og:description" content="The city has changed drastically over the past 40 years, yet the M.T.A. map designed in 1979 has largely endured.">',
           '<meta property="og:image" content="https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg">',
-          '<meta property="og:image:alt" content="M.assert.A. map designed in 1979">',
+          '<meta property="og:image:alt" content="M.T.A. map designed in 1979">',
           '<meta property="og:image:width" content="1050">',
           '<meta property="og:image:height" content="550">',
           '<meta property="article:published_time" content="2019-12-02T10:00:00.000Z">',
@@ -1130,7 +1130,7 @@ test('rehypeMeta', async function (t) {
           '<meta property="article:tag" content="Massimo Vignelli">',
           '<meta name="twitter:card" content="summary_large_image">',
           '<meta name="twitter:image" content="https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg">',
-          '<meta name="twitter:image:alt" content="M.assert.A. map designed in 1979">',
+          '<meta name="twitter:image:alt" content="M.T.A. map designed in 1979">',
           '<meta name="twitter:site" content="@nytimes">',
           '<meta name="twitter:creator" content="@jane">',
           '<meta name="twitter:label1" content="Posted in">',
@@ -1160,9 +1160,9 @@ test('rehypeMeta', async function (t) {
             description:
               'Crispy Sea Salt and Vinegar Roasted Potatoes. These are so crisp and flavorful, you’ll want to eat them as a side dish for every meal!',
             image: {
+              height: '1012',
               url: 'https://hostthetoast.com/wp-content/uploads/2014/06/Salt-and-Vinegar-Potatoes-6.jpg',
-              width: '670',
-              height: '1012'
+              width: '670'
             },
             modified: '2017-04-26T22:37:10-05:00',
             name: 'Host The Toast',
