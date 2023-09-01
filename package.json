@@ -4,21 +4,21 @@
   "description": "rehype plugin to add metadata to the head of a document",
   "license": "MIT",
   "keywords": [
-    "unified",
-    "rehype",
-    "rehype-plugin",
-    "plugin",
-    "html",
-    "hast",
-    "syntax",
-    "tree",
     "document",
+    "facebook",
+    "graph",
+    "hast",
     "head",
+    "html",
     "meta",
     "open",
-    "graph",
-    "facebook",
-    "twitter"
+    "plugin",
+    "rehype",
+    "rehype-plugin",
+    "syntax",
+    "tree",
+    "twitter",
+    "unified"
   ],
   "repository": "rehypejs/rehype-meta",
   "bugs": "https://github.com/rehypejs/rehype-meta/issues",
@@ -36,7 +36,6 @@
   "types": "index.d.ts",
   "files": [
     "lib/",
-    "complex-types.d.ts",
     "index.d.ts",
     "index.js"
   ],
@@ -45,7 +44,7 @@
     "hast-util-from-selector": "^3.0.0",
     "hast-util-select": "^6.0.0",
     "hastscript": "^8.0.0",
-    "unified": "^11.0.0"
+    "vfile": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -87,6 +86,17 @@
     "strict": true
   },
   "xo": {
+    "overrides": [
+      {
+        "files": [
+          "*.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/ban-types": "off",
+          "@typescript-eslint/consistent-type-definitions": "off"
+        }
+      }
+    ],
     "prettier": true
   }
 }

@@ -216,15 +216,15 @@ If your workflow enables front matter, that’s a good way to keep data in files
 Alternatively, do it yourself by adding data at `file.data.meta`, which can also
 be done by plugins:
 
-*   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
-    — infer [`modified`][c-modified], [`published`][c-published], and
-    [`author`][c-author] from Git
-*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
-    — infer [`title`][c-title] from the document
 *   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
     — infer [`description`][c-description] from the document
 *   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
     — infer [`readingTime`][c-readingtime] from the document
+*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
+    — infer [`title`][c-title] from the document
+*   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
+    — infer [`author`][c-author], [`modified`][c-modified], and
+    [`published`][c-published] from Git
 
 ###### `config.og`
 
@@ -394,7 +394,7 @@ Affects: [`meta[name=keywords]`][m-keywords],
 ###### `config.image`
 
 One or more images associated with the document (`string`, `Image`, or
-`Array<string|Image>`, optional).
+`Array<Image | string>`, optional).
 If strings are passed, they are seen as `Image` objects with a `url` field set
 to that value.
 
@@ -962,8 +962,10 @@ file.data.meta = {
 await unified()
   .use(remarkParse)
   .use(remarkFrontmatter)
-  .use(() => (_, file) => {
-    matter(file)
+  .use(function () {
+    return function (_, file) {
+      matter(file)
+    }
   })
   .use(remarkRehype)
   // `rehype-document` manages non-metadata things in `<head>`.

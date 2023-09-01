@@ -7,7 +7,13 @@ import rehypeMeta from './index.js'
 const currentYear = new Date().getFullYear()
 
 test('rehypeMeta', async function (t) {
-  await t.test('basics', async function (t) {
+  await t.test('core', async function (t) {
+    await t.test('should expose the public api', async function () {
+      assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
+        'default'
+      ])
+    })
+
     await t.test('should work in fragment mode', async function () {
       assert.equal(
         rehype()
@@ -43,7 +49,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {title: 'About', name: 'Example'})
+            .use(rehypeMeta, {name: 'Example', title: 'About'})
             .processSync('')
             .toString(),
           ['<head>', '<title>About - Example</title>', '</head>', ''].join('\n')
@@ -58,9 +64,9 @@ test('rehypeMeta', async function (t) {
           rehype()
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
-              title: 'About',
               name: 'Example',
-              separator: ' | '
+              separator: ' | ',
+              title: 'About'
             })
             .processSync('')
             .toString(),
@@ -170,7 +176,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {tags: ['a', 'b'], siteTags: ['b', 'c']})
+            .use(rehypeMeta, {siteTags: ['b', 'c'], tags: ['a', 'b']})
             .processSync('')
             .toString(),
           [
@@ -249,7 +255,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {siteAuthor: 'Jane X. Doe', copyright: true})
+            .use(rehypeMeta, {copyright: true, siteAuthor: 'Jane X. Doe'})
             .processSync('')
             .toString(),
           [
@@ -273,8 +279,8 @@ test('rehypeMeta', async function (t) {
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
               author: 'Jane X. Doe',
-              published: '2018',
-              copyright: true
+              copyright: true,
+              published: '2018'
             })
             .processSync('')
             .toString(),
@@ -369,8 +375,8 @@ test('rehypeMeta', async function (t) {
           rehype()
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
-              twitter: true,
-              image: 'https://example.com/index.png'
+              image: 'https://example.com/index.png',
+              twitter: true
             })
             .processSync('')
             .toString(),
@@ -392,8 +398,8 @@ test('rehypeMeta', async function (t) {
           rehype()
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
-              twitter: true,
-              image: {url: 'https://example.com/index.png', alt: 'A'}
+              image: {alt: 'A', url: 'https://example.com/index.png'},
+              twitter: true
             })
             .processSync('')
             .toString(),
@@ -415,7 +421,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, siteTwitter: 'example'})
+            .use(rehypeMeta, {siteTwitter: 'example', twitter: true})
             .processSync('')
             .toString(),
           [
@@ -435,7 +441,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, siteTwitter: '@example'})
+            .use(rehypeMeta, {siteTwitter: '@example', twitter: true})
             .processSync('')
             .toString(),
           [
@@ -455,7 +461,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, authorTwitter: 'example'})
+            .use(rehypeMeta, {authorTwitter: 'example', twitter: true})
             .processSync('')
             .toString(),
           [
@@ -475,7 +481,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, authorTwitter: '@example'})
+            .use(rehypeMeta, {authorTwitter: '@example', twitter: true})
             .processSync('')
             .toString(),
           [
@@ -557,10 +563,10 @@ test('rehypeMeta', async function (t) {
           rehype()
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
+              name: 'Site',
               og: true,
               ogNameInTitle: true,
-              title: 'About',
-              name: 'Site'
+              title: 'About'
             })
             .processSync('')
             .toString(),
@@ -583,7 +589,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {og: true, name: 'Example'})
+            .use(rehypeMeta, {name: 'Example', og: true})
             .processSync('')
             .toString(),
           [
@@ -604,7 +610,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {og: true, description: 'Lorem ipsum'})
+            .use(rehypeMeta, {description: 'Lorem ipsum', og: true})
             .processSync('')
             .toString(),
           [
@@ -657,7 +663,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {og: true, image: 'https://example.com/index.png'})
+            .use(rehypeMeta, {image: 'https://example.com/index.png', og: true})
             .processSync('')
             .toString(),
           [
@@ -678,8 +684,8 @@ test('rehypeMeta', async function (t) {
           rehype()
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
-              og: true,
-              image: {url: 'https://example.com/index.png', alt: 'Alpha'}
+              image: {alt: 'Alpha', url: 'https://example.com/index.png'},
+              og: true
             })
             .processSync('')
             .toString(),
@@ -727,7 +733,7 @@ test('rehypeMeta', async function (t) {
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
               og: true,
-              image: {url: 'https://example.com/index.png', height: 1}
+              image: {height: 1, url: 'https://example.com/index.png'}
             })
             .processSync('')
             .toString(),
@@ -749,10 +755,10 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            // @ts-expect-error: URL missing.
+            // @ts-expect-error: check how the runtime handles missing `url`.
             .use(rehypeMeta, {
-              og: true,
-              image: {alt: '?', width: 1, height: 1}
+              image: {alt: '?', height: 1, width: 1},
+              og: true
             })
             .processSync('')
             .toString(),
@@ -771,8 +777,8 @@ test('rehypeMeta', async function (t) {
         rehype()
           .data('settings', {fragment: true})
           .use(rehypeMeta, {
-            og: true,
-            image: ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            image: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+            og: true
           })
           .processSync('')
           .toString(),
@@ -818,8 +824,8 @@ test('rehypeMeta', async function (t) {
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
               og: true,
-              type: 'article',
-              published: new Date(1_234_567_890_123)
+              published: new Date(1_234_567_890_123),
+              type: 'article'
             })
             .processSync('')
             .toString(),
@@ -842,8 +848,8 @@ test('rehypeMeta', async function (t) {
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
               og: true,
-              type: 'article',
-              modified: new Date(1_234_567_890_123)
+              modified: new Date(1_234_567_890_123),
+              type: 'article'
             })
             .processSync('')
             .toString(),
@@ -864,8 +870,8 @@ test('rehypeMeta', async function (t) {
           .data('settings', {fragment: true})
           .use(rehypeMeta, {
             og: true,
-            type: 'article',
-            published: '2019-12-04T22:00:00.000Z'
+            published: '2019-12-04T22:00:00.000Z',
+            type: 'article'
           })
           .processSync('')
           .toString(),
@@ -886,9 +892,9 @@ test('rehypeMeta', async function (t) {
           rehype()
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
+              authorFacebook: 'example',
               og: true,
-              type: 'article',
-              authorFacebook: 'example'
+              type: 'article'
             })
             .processSync('')
             .toString(),
@@ -909,7 +915,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {og: true, type: 'article', section: 'a'})
+            .use(rehypeMeta, {og: true, section: 'a', type: 'article'})
             .processSync('')
             .toString(),
           [
@@ -931,8 +937,8 @@ test('rehypeMeta', async function (t) {
             .data('settings', {fragment: true})
             .use(rehypeMeta, {
               og: true,
-              type: 'article',
-              tags: ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+              tags: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+              type: 'article'
             })
             .processSync('')
             .toString(),
@@ -959,7 +965,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, section: 'a'})
+            .use(rehypeMeta, {section: 'a', twitter: true})
             .processSync('')
             .toString(),
           [
@@ -980,7 +986,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, readingTime: 0.1})
+            .use(rehypeMeta, {readingTime: 0.1, twitter: true})
             .processSync('')
             .toString(),
           [
@@ -1001,7 +1007,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, section: 'a', readingTime: 0.1})
+            .use(rehypeMeta, {readingTime: 0.1, section: 'a', twitter: true})
             .processSync('')
             .toString(),
           [
@@ -1024,7 +1030,7 @@ test('rehypeMeta', async function (t) {
         assert.equal(
           rehype()
             .data('settings', {fragment: true})
-            .use(rehypeMeta, {twitter: true, readingTime: [8.2, 11.1]})
+            .use(rehypeMeta, {readingTime: [8.2, 11.1], twitter: true})
             .processSync('')
             .toString(),
           [
@@ -1046,13 +1052,28 @@ test('rehypeMeta', async function (t) {
         rehype()
           .data('settings', {fragment: true})
           .use(rehypeMeta, {
-            twitter: true,
-            og: true,
+            author: 'Jane Doe',
+            authorFacebook: 'janedoe',
+            authorTwitter: '@jane',
             copyright: true,
-            type: 'article',
+            description:
+              'The city has changed drastically over the past 40 years, yet the M.assert.A. map designed in 1979 has largely endured.',
+            image: {
+              url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
+              alt: 'M.assert.A. map designed in 1979',
+              width: '1050',
+              height: '550'
+            },
+            modified: '2019-12-03T19:13:00.000Z',
+            name: 'The New York Times',
+            og: true,
             origin: 'https://www.nytimes.com',
             pathname: '/interactive/2019/12/02/nyregion/nyc-subway-map.html',
-            name: 'The New York Times',
+            published: '2019-12-02T10:00:00.000Z',
+            readingTime: 11.1,
+            section: 'New York',
+            separator: ' | ',
+            siteAuthor: 'The New York Times',
             siteTags: [
               'US Politics',
               'Impeachment',
@@ -1063,17 +1084,7 @@ test('rehypeMeta', async function (t) {
               'Climate Change',
               'Global Warming'
             ],
-            siteAuthor: 'The New York Times',
             siteTwitter: '@nytimes',
-            author: 'Jane Doe',
-            authorTwitter: '@jane',
-            authorFacebook: 'janedoe',
-            title:
-              'The New York City Subway Map as You’ve Never Seen It Before',
-            separator: ' | ',
-            description:
-              'The city has changed drastically over the past 40 years, yet the M.assert.A. map designed in 1979 has largely endured.',
-            section: 'New York',
             tags: [
               'Subway',
               'Map',
@@ -1083,15 +1094,10 @@ test('rehypeMeta', async function (t) {
               'Massimo Vignelli',
               'NYC'
             ],
-            image: {
-              url: 'https://static01.nyt.com/images/2019/12/02/autossell/mta-promo-image/mta-crop-facebookJumbo.jpg',
-              alt: 'M.assert.A. map designed in 1979',
-              width: '1050',
-              height: '550'
-            },
-            published: '2019-12-02T10:00:00.000Z',
-            modified: '2019-12-03T19:13:00.000Z',
-            readingTime: 11.1
+            title:
+              'The New York City Subway Map as You’ve Never Seen It Before',
+            twitter: true,
+            type: 'article'
           })
           .processSync('')
           .toString(),
@@ -1142,27 +1148,32 @@ test('rehypeMeta', async function (t) {
         rehype()
           .data('settings', {fragment: true})
           .use(rehypeDocument, {
-            language: 'en',
             css: 'index.css',
-            js: 'index.js'
+            js: 'index.js',
+            language: 'en'
           })
           .use(rehypeMeta, {
-            twitter: true,
-            og: true,
-            copyright: true,
-            type: 'article',
-            origin: 'https://hostthetoast.com',
-            pathname: '/crispy-sea-salt-vinegar-roasted-potatoes/',
-            name: 'Host The Toast',
-            siteAuthor: 'Host the Toast',
-            siteTwitter: '@hostthetoast',
             author: 'Jane Doe',
-            authorTwitter: '@jane',
             authorFacebook: 'janedoe',
-            title: 'Crispy Sea Salt and Vinegar Roasted Potatoes',
+            authorTwitter: '@jane',
+            copyright: true,
             description:
               'Crispy Sea Salt and Vinegar Roasted Potatoes. These are so crisp and flavorful, you’ll want to eat them as a side dish for every meal!',
+            image: {
+              url: 'https://hostthetoast.com/wp-content/uploads/2014/06/Salt-and-Vinegar-Potatoes-6.jpg',
+              width: '670',
+              height: '1012'
+            },
+            modified: '2017-04-26T22:37:10-05:00',
+            name: 'Host The Toast',
+            og: true,
+            origin: 'https://hostthetoast.com',
+            pathname: '/crispy-sea-salt-vinegar-roasted-potatoes/',
+            published: '2014-06-30T15:01:35-05:00',
+            readingTime: 3.083,
             section: 'Food',
+            siteAuthor: 'Host the Toast',
+            siteTwitter: '@hostthetoast',
             tags: [
               'chips',
               'Crispy',
@@ -1179,14 +1190,9 @@ test('rehypeMeta', async function (t) {
               'vinegar',
               'wedges'
             ],
-            image: {
-              url: 'https://hostthetoast.com/wp-content/uploads/2014/06/Salt-and-Vinegar-Potatoes-6.jpg',
-              width: '670',
-              height: '1012'
-            },
-            published: '2014-06-30T15:01:35-05:00',
-            modified: '2017-04-26T22:37:10-05:00',
-            readingTime: 3.083
+            title: 'Crispy Sea Salt and Vinegar Roasted Potatoes',
+            twitter: true,
+            type: 'article'
           })
           .processSync('')
           .toString(),
