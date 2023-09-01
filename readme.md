@@ -68,14 +68,14 @@ npm install rehype-meta
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import rehypeMeta from 'https://esm.sh/rehype-meta@3'
+import rehypeMeta from 'https://esm.sh/rehype-meta@4'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import rehypeMeta from 'https://esm.sh/rehype-meta@3?bundle'
+  import rehypeMeta from 'https://esm.sh/rehype-meta@4?bundle'
 </script>
 ```
 
