@@ -1121,7 +1121,7 @@ your types, as that registers the new fields on the file.
 
 ```js
 /**
- * @typedef {import('rehype-meta')}
+ * @import {} from 'rehype-meta'
  */
 
 import {VFile} from 'vfile'
