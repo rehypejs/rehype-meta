@@ -12,24 +12,24 @@
 
 ## Contents
 
-*   [What is this?](#what-is-this)
-*   [When should I use this?](#when-should-i-use-this)
-*   [Install](#install)
-*   [Use](#use)
-*   [API](#api)
-    *   [`unified().use(rehypeMeta[, options])`](#unifieduserehypemeta-options)
-    *   [`Image`](#image)
-    *   [`Options`](#options)
-*   [Metadata](#metadata)
-*   [Examples](#examples)
-    *   [Example: frontmatter in markdown](#example-frontmatter-in-markdown)
-    *   [Example: inferring metadata](#example-inferring-metadata)
-*   [Types](#types)
-*   [Compatibility](#compatibility)
-*   [Security](#security)
-*   [Related](#related)
-*   [Contribute](#contribute)
-*   [License](#license)
+* [What is this?](#what-is-this)
+* [When should I use this?](#when-should-i-use-this)
+* [Install](#install)
+* [Use](#use)
+* [API](#api)
+  * [`unified().use(rehypeMeta[, options])`](#unifieduserehypemeta-options)
+  * [`Image`](#image)
+  * [`Options`](#options)
+* [Metadata](#metadata)
+* [Examples](#examples)
+  * [Example: frontmatter in markdown](#example-frontmatter-in-markdown)
+  * [Example: inferring metadata](#example-inferring-metadata)
+* [Types](#types)
+* [Compatibility](#compatibility)
+* [Security](#security)
+* [Related](#related)
+* [Contribute](#contribute)
+* [License](#license)
 
 ## What is this?
 
@@ -194,8 +194,8 @@ Add metadata to the `<head>`.
 
 ###### Parameters
 
-*   `options` ([`Options`][api-options], optional)
-    — configuration
+* `options` ([`Options`][api-options], optional)
+  — configuration
 
 ###### Returns
 
@@ -205,18 +205,18 @@ Transform ([`Transformer`][unified-transformer]).
 
 ###### Algorithm
 
-*   adds a `<head>` if one doesn’t already exist
-*   overwrites existing metadata in `<head>` (for example, when a `<title>`
-    already exists, it’s updated)
+* adds a `<head>` if one doesn’t already exist
+* overwrites existing metadata in `<head>` (for example, when a `<title>`
+  already exists, it’s updated)
 
 ###### Config
 
 There are three ways to configure the metadata of a document.
 
-1.  pass an object as `options` when [using `rehypeMeta`][api-rehype-meta]
-2.  define it in YAML front matter (by integrating with
-    [`vfile-matter`][vfile-matter])
-3.  define an object at `file.data.meta`
+1. pass an object as `options` when [using `rehypeMeta`][api-rehype-meta]
+2. define it in YAML front matter (by integrating with
+   [`vfile-matter`][vfile-matter])
+3. define an object at `file.data.meta`
 
 Configuration is created by extending the defaults, with these objects, in the
 above order (so `file.data.meta` is preferred over `options`).
@@ -225,15 +225,15 @@ If your workflow enables front matter, that’s a good way to keep data in files
 Alternatively, do it yourself by adding data at `file.data.meta`, which can also
 be done by plugins:
 
-*   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
-    — infer [`description`][o-description] from the document
-*   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
-    — infer [`readingTime`][o-reading-time] from the document
-*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
-    — infer [`title`][o-title] from the document
-*   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
-    — infer [`author`][o-author], [`modified`][o-modified], and
-    [`published`][o-published] from Git
+* [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
+  — infer [`description`][o-description] from the document
+* [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
+  — infer [`readingTime`][o-reading-time] from the document
+* [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
+  — infer [`title`][o-title] from the document
+* [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
+  — infer [`author`][o-author], [`modified`][o-modified], and
+  [`published`][o-published] from Git
 
 ### `Image`
 
@@ -241,15 +241,15 @@ Image metadata (TypeScript type).
 
 ###### Fields
 
-*   `alt` (`string`, optional, example: `'M.T.A. map designed in 1979'`)
-    — alt text of image
-*   `height` (`number | string`, optional, example: `'550'`)
-    — height of image
-*   `url` (`string`, required, example:
-    `'https://static01.nyt.com/images/…/mta-crop-jumbo.jpg'`)
-    — URL of image
-*   `width` (`number | string`, optional, example: `'1050'`)
-    — width of image
+* `alt` (`string`, optional, example: `'M.T.A. map designed in 1979'`)
+  — alt text of image
+* `height` (`number | string`, optional, example: `'550'`)
+  — height of image
+* `url` (`string`, required, example:
+  `'https://static01.nyt.com/images/…/mta-crop-jumbo.jpg'`)
+  — URL of image
+* `width` (`number | string`, optional, example: `'1050'`)
+  — width of image
 
 ### `Options`
 
@@ -1152,20 +1152,20 @@ integration.
 
 ## Related
 
-*   [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
-    — infer file metadata from Git
-*   [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
-    — infer file metadata from the description of a document
-*   [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
-    — infer file metadata from the title of a document
-*   [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
-    — infer file metadata about how long the document takes to read
-*   [`rehype-document`][rehype-document]
-    — wrap a fragment in a document
-*   [`rehype-format`](https://github.com/rehypejs/rehype-format)
-    — format HTML
-*   [`rehype-minify`](https://github.com/rehypejs/rehype-minify)
-    — minify HTML
+* [`unified-infer-git-meta`](https://github.com/unifiedjs/unified-infer-git-meta)
+  — infer file metadata from Git
+* [`rehype-infer-description-meta`](https://github.com/rehypejs/rehype-infer-description-meta)
+  — infer file metadata from the description of a document
+* [`rehype-infer-title-meta`](https://github.com/rehypejs/rehype-infer-title-meta)
+  — infer file metadata from the title of a document
+* [`rehype-infer-reading-time-meta`](https://github.com/rehypejs/rehype-infer-reading-time-meta)
+  — infer file metadata about how long the document takes to read
+* [`rehype-document`][rehype-document]
+  — wrap a fragment in a document
+* [`rehype-format`](https://github.com/rehypejs/rehype-format)
+  — format HTML
+* [`rehype-minify`](https://github.com/rehypejs/rehype-minify)
+  — minify HTML
 
 ## Contribute
 
